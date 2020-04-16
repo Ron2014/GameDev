@@ -14,12 +14,20 @@ public:
     ObjectManager();
     virtual ~ObjectManager();
 
-    virtual void Update();
-
     virtual void AddMember(int, T*);
     virtual void RemoveMember(const int);
     virtual T* GetMember(const int);
 };
+
+template <class T>
+ObjectManager<T>::ObjectManager() {
+
+}
+
+template <class T>
+ObjectManager<T>::~ObjectManager() {
+
+}
 
 template <class T>
 void ObjectManager<T>::AddMember(int id, T* e){

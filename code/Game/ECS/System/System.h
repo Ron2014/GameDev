@@ -10,7 +10,7 @@ class System
 {
 public:
     enum Type {
-        render,
+        world_render,
         motion_steer,
         path_finding,
         TypeCount,
@@ -25,8 +25,7 @@ public:
     }
 
 protected:    
-    System(){}
-
+    System();
     System::Type m_type;
     void SetType(System::Type type) { m_type = type; }
 
@@ -37,10 +36,4 @@ public:
     std::string GetName() { return GetName(m_type); }
 
     virtual void Update()=0;
-};
-
-std::string system_names[System::TypeCount] = {
-    "render",
-    "motion_steer",
-    "path_finding",
 };

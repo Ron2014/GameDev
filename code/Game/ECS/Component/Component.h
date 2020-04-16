@@ -27,13 +27,8 @@ protected:
     int m_ID;
     static int m_iNextValidID;
 
-    Component() {
-        SetID(m_iNextValidID);
-        m_iNextValidID++;
-        if (m_iNextValidID < 0)
-            m_iNextValidID = 0;
-    }
-
+    Component();
+    
     void SetID(int id) { m_ID = id; }
     void SetType(Component::Type type) { m_type = type; }
 

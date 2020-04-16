@@ -28,13 +28,8 @@ protected:
     Entity::Type m_type;
     int m_ID;
     static int m_iNextValidID;
-
-    Entity() {
-        SetID(m_iNextValidID);
-        m_iNextValidID++;
-        if (m_iNextValidID < 0)
-            m_iNextValidID = 0;
-    }
+    
+    Entity();
 
     void SetID(int id) { m_ID = id; }
     void SetType(Entity::Type type) { m_type = type; }

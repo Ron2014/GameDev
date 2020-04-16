@@ -17,6 +17,14 @@ TerrainConfig::~TerrainConfig() {
     _gridInfos.clear();
 }
 
+int TerrainConfig::GetGridRow() {
+    return _iGridRow;
+}
+
+int TerrainConfig::GetGridCol() {
+    return _iGridCol;
+}
+
 void TerrainConfig::LoadData(int id) {
     // get filename from id
 }
@@ -31,8 +39,10 @@ void TerrainConfig::LoadData(std::string filename) {
     unsigned char version;
     fin.read((char *)&version, sizeof(unsigned char));
 
-    if(VERSION!=version)
+    if(VERSION!=version){
         Log::Error("Terrain(%s) Version(%d) not matched!", filename, version);
+        return;
+    }
     
     char tmp[255];
     unsigned char length;
@@ -52,7 +62,7 @@ void TerrainConfig::LoadData(std::string filename) {
     _sLevel = tmp;
 
     if(Path::GetBaseFilename(filename) != _sName)
-        Log::Error("Terrain(%s) Name(%s) not matched!", filename, _sName);
+        Log::Error("Terrain(%s) Name(%s) not matched!", filename.c_str(), _sName.c_str());
     
     int lineWidth, lineLength;
     fin.read((char *)&lineWidth, sizeof(int));
@@ -158,6 +168,14 @@ void TerrainConfig::DumpData() {
         }
         printf("\n");
     }
+}
+
+int TerrainConfig::Pos2GridRow(Vector3D pos) {
+    return int(pos.z / _dLineLength);
+}
+
+int TerrainConfig::Pos2GridCol(Vector3D pos) {
+    return int(pos.x / _dLineWidth);
 }
 
 grid_type TerrainConfig::GetPointType(Vector3D pos) {

@@ -9,7 +9,21 @@ fips_begin_module(ECS)
     fips_dir(.)
     fips_files(
         Global.h
+        Global.cc
     )
 
     fips_deps(Terrain)
 fips_end_module()
+
+fips_begin_unittest(ECS)
+    fips_vs_warning_level(3)
+    fips_vs_disable_warnings(4819 4996)  # 为了中文注释 cp936
+    
+    fips_dir(UnitTests)
+    if(FIPS_WINDOWS)
+    endif()
+    fips_files(
+        MainLoopTest.cc
+    )
+    fips_deps(ECS)
+fips_end_unittest()

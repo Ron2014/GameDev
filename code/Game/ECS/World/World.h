@@ -33,12 +33,7 @@ protected:
     // entitys
     std::set<int> m_sEntityIDs;
 
-    World() {
-        SetID(m_iNextValidID);
-        m_iNextValidID++;
-        if (m_iNextValidID < 0)
-            m_iNextValidID = 0;
-    }
+    World();
 
     void SetID(int id) { m_ID = id; }
     void SetType(World::Type type) { m_type = type; }

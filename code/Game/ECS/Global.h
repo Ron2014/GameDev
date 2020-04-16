@@ -4,5 +4,5 @@
 #include "World/World.h"
 
 // all world & entity
-static ObjectManager<World> gWorldMgr;
-static ObjectManager<Entity> gEntityMgr;
+extern ObjectManager<World> gWorldMgr;
+extern ObjectManager<Entity> gEntityMgr;

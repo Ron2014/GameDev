@@ -1,8 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Core/3D/Vector3D.h"
-#include "System/SystemPathfinding.h"
-#include <set>
+using namespace Future;
 
 typedef struct PathNode{
     Vector3D point;
@@ -12,17 +11,10 @@ typedef struct PathNode{
 struct ComponentPathfinding: public Component
 {
 public:
-    ComponentPathfinding():Component(){
+    PathNode *head;
+    ComponentPathfinding():head(nullptr),Component(){
         SetType(Component::path_finding);
     }
-
-    PathNode *head;
-
-    virtual void AddTo(Entity *e) {
-        SystemPathfinding::Instance()->RegisterEntity(e->GetID());
-    }
-
-    virtual void RemoveFrom(Entity *e) {
-        SystemPathfinding::Instance()->UnregisterEntity(e->GetID());
-    }
+    virtual void AddTo(Entity *);
+    virtual void RemoveFrom(Entity *);
 };

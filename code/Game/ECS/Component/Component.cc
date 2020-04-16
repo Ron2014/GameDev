@@ -9,10 +9,17 @@ std::string component_names[Component::TypeCount] = {
     "path_finding",
 };
 
-void AddTo(Entity *e) {
+Component::Component() {
+    SetID(m_iNextValidID);
+    m_iNextValidID++;
+    if (m_iNextValidID < 0)
+        m_iNextValidID = 0;
+}
+
+void Component::AddTo(Entity *e) {
 
 }
 
-void RemoveFrom(Entity *e) {
+void Component::RemoveFrom(Entity *e) {
 
 }

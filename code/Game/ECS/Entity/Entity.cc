@@ -9,6 +9,17 @@ std::string entity_names[Entity::TypeCount] = {
     "monster",
 };
 
+Entity::Entity() {
+    SetID(m_iNextValidID);
+    m_iNextValidID++;
+    if (m_iNextValidID < 0)
+        m_iNextValidID = 0;
+}
+
+Entity::~Entity() {
+
+}
+
 Component* Entity::GetComponent(Component::Type component_type) {
     return m_mgrComponent.GetMember((int)component_type);
 }
