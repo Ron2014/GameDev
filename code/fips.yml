@@ -1,0 +1,15 @@
+#
+# Future
+#
+imports:
+    fips-unittestpp:
+        git: https://github.com/floooh/fips-unittestpp.git
+    # curl:
+    #     git: https://github.com/curl/curl.git
+    #     rev: 2e9b725f
+defines:
+    FIPS_UNITTESTS: ON
+# exports:
+#     header-dirs: [ Ext/zlib ]
+#     modules:
+#       zlib: Ext/zlib
