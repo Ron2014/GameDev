@@ -4,4 +4,5 @@
 *.pyc
 .vscode/
 .idea/
+Ext/ncurses-6.2/**
 #<fips

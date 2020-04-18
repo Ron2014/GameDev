@@ -7,6 +7,12 @@
 
 using namespace Future;
 
+#if FUTURE_WINDOWS
+char * TerrainConfig::MAP_FILE_PATH = "E:/GitHub/GameDev/resource/maps";
+#else
+char * TerrainConfig::MAP_FILE_PATH = "/mnt/e/GitHub/GameDev/resource/maps";
+#endif
+
 TerrainConfig::TerrainConfig():
     _dLineWidth(1.0),
     _dLineLength(1.0),
@@ -170,15 +176,15 @@ void TerrainConfig::DumpData() {
     }
 }
 
-int TerrainConfig::Pos2GridRow(Vector3D pos) {
+int TerrainConfig::Pos2GridRow(const Vector3D &pos) {
     return int(pos.z / _dLineLength);
 }
 
-int TerrainConfig::Pos2GridCol(Vector3D pos) {
+int TerrainConfig::Pos2GridCol(const Vector3D &pos) {
     return int(pos.x / _dLineWidth);
 }
 
-grid_type TerrainConfig::GetPointType(Vector3D pos) {
+grid_type TerrainConfig::GetPointType(const Vector3D &pos) {
     int col = int(pos.x / _dLineWidth);
     int row = int(pos.z / _dLineLength);
     return GetGridType(col, row);

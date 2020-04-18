@@ -7,6 +7,7 @@
 
 #include <math.h>
 #include <limits>
+#include <iostream>
 #include "Core/Math/MathDefs.h"
 
 namespace Future

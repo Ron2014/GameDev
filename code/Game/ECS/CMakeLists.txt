@@ -1,6 +1,17 @@
 fips_begin_module(ECS)
     fips_include_directories(.)
 
+    if (FIPS_POSIX)
+        fips_include_directories(../../Ext/ncurses-6.2/include)
+        link_directories(../../Ext/ncurses-6.2/lib)
+        fips_libs(
+            libncurses_g.a
+            libncurses.a
+            libncurses++_g.a
+            libncurses++.a
+        )
+    endif()
+
     fips_files_ex(Entity *.* GROUP "Entity")
     fips_files_ex(Component *.* GROUP "Component")
     fips_files_ex(System *.* GROUP "System")

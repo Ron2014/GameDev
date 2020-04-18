@@ -43,7 +43,7 @@ void ObjectManager<T>::RemoveMember(const int id){
 
 template <class T>
 T* ObjectManager<T>::GetMember(const int id){
-    std::map<int, T*>::iterator it = m_map.find(id);
+    typename std::map<int, T*>::iterator it = m_map.find(id);
     if (it != m_map.end())
         return it->second;
     return nullptr;

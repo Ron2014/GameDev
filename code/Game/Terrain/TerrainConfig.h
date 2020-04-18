@@ -15,10 +15,10 @@ public:
     void SaveData();
     void DumpData();
 
-    int Pos2GridRow(Vector3D pos);
-    int Pos2GridCol(Vector3D pos);
+    int Pos2GridRow(const Vector3D &pos);
+    int Pos2GridCol(const Vector3D &pos);
 
-    grid_type GetPointType(Vector3D pos);
+    grid_type GetPointType(const Vector3D &pos);
     grid_type GetGridType(int col, int row);
 
     int GetGridRow();
@@ -26,7 +26,7 @@ public:
 
 private:
     const int VERSION = 10;
-    const char* MAP_FILE_PATH = "E:/GitHub/GameDev/resource/maps";
+    static char* MAP_FILE_PATH;
 
     std::string _sName;
     std::string _sStage;
