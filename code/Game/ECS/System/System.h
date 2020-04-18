@@ -13,6 +13,7 @@ public:
         world_render,
         motion_steer,
         path_finding,
+        moving,
         TypeCount,
     };
     

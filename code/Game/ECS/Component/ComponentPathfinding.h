@@ -12,9 +12,11 @@ struct ComponentPathfinding: public Component
 {
 public:
     PathNode *head;
-    ComponentPathfinding():head(nullptr),Component(){
-        SetType(Component::path_finding);
-    }
+    
+    ComponentPathfinding();
+    ~ComponentPathfinding();
+
+    void SetDestination(const Vector3D &destination);
     virtual void AddTo(Entity *);
     virtual void RemoveFrom(Entity *);
 };

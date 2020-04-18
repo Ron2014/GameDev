@@ -22,6 +22,15 @@ SystemPathfinding::~SystemPathfinding()
 
 void SystemPathfinding::RegisterEntity(int entity_id) {
     m_sEntityIDs.insert(entity_id);
+
+    // now, let's make a plan to get the target
+    Entity *e = gEntityMgr.GetMember(entity_id);
+    Component *c = e->GetComponent(Component::location);
+    Vector3D position = ((ComponentLocation *)c)->vPosition;
+    c = e->GetComponent(Component::path_finding);
+    Vector3D destination = ((ComponentPathfinding *)c)->head->point;
+
+    // TODO: how to arrive destination from position?
 }
 
 void SystemPathfinding::UnregisterEntity(int entity_id) {
@@ -43,22 +52,34 @@ void SystemPathfinding::Update() {
             Vector3D position = ((ComponentLocation *)c)->vPosition;
             Vector3D heading = ((ComponentLocation *)c)->vHeading;
 
-            c = e->GetComponent(Component::moving);
-
-            // variable for moving
-            Vector3D velocity = ((ComponentMoving *)c)->vVelocity;
-            int mass = ((ComponentMoving *)c)->iMass;
-            int maxSpeed = ((ComponentMoving *)c)->iMaxSpeed;
-            int maxForce = ((ComponentMoving *)c)->iMaxForce;
-            int maxTurnRate = ((ComponentMoving *)c)->iMaxTurnRate;
-
             c = e->GetComponent(Component::path_finding);
 
             // variable for pathfinding
             PathNode *node = ((ComponentPathfinding *)c)->head;
             Vector3D nextPos = node->point;
 
-            // calculate new pos
+            double distance = nextPos.Distance(position);
+            if (Math::isEqual(distance, 0.0)) {
+                // arrive this node;
+                free(node);
+                node = node->next;
+                ((ComponentPathfinding *)c)->head = node;
+
+                if (node) {
+                    // next target
+                    nextPos = node->point;
+                    c = e->GetComponent(Component::moving);
+
+                    Vector3D direction = nextPos - position;
+                    int maxSpeed = ((ComponentMoving *)c)->iMaxSpeed;
+                    direction.Truncate(maxSpeed);
+                    ((ComponentMoving *)c)->vVelocity = direction;
+
+                } else {
+                    // finish pathfinding
+                    e->RemoveComponent(Component::path_finding);
+                }
+            }
 
         } else {
             Log::Error("Render Error: entity %d not exist!", *it);

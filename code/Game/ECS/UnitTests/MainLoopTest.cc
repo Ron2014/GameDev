@@ -7,10 +7,12 @@
 #include "World/WorldMaintown.h"
 
 #include "Component/ComponentLocation.h"
+#include "Component/ComponentMoving.h"
 
 #include "System/SystemWorldRender.h"
 #include "System/SystemMotionSteer.h"
 #include "System/SystemPathfinding.h"
+#include "System/SystemMoving.h"
 
 #if FUTURE_WINDOWS
 #include <windows.h>
@@ -23,7 +25,7 @@
 */
 TEST(MainLoop) {
     WorldMaintown world0;
-    world0.LoadTerrain("test0.txt");
+    world0.LoadTerrain("helloworld2.txt");
     gWorldMgr.AddMember(world0.GetID(), &world0);
 
     EntityPlayer entity0;
@@ -34,18 +36,26 @@ TEST(MainLoop) {
     c->vPosition.One();
     c->vHeading.Zero();
 
+    ComponentMoving *c1 = (ComponentMoving *)entity0.AddComponent(Component::moving);
+    c1->vVelocity.Zero();
+    c1->iMass = 100;
+    c1->iMaxSpeed = 100;
+    c1->iMaxForce = 100;
+    c1->iMaxTurnRate = 0;
+
     world0.Enter(&entity0);
 
     SystemWorldRender::Instance()->SetWorldID(world0.GetID());
     while(true) {
         SystemMotionSteer::Instance()->Update();
         SystemPathfinding::Instance()->Update();
+        SystemMoving::Instance()->Update();
         SystemWorldRender::Instance()->Update();
 
 #if FUTURE_WINDOWS
         Sleep(1000);
 #else
-        sleep(1000);
+        sleep(1);
 #endif
     }
 

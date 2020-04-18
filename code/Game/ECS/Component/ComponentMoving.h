@@ -15,4 +15,7 @@ public:
     int iMaxSpeed;
     int iMaxForce;
     int iMaxTurnRate;
+    
+    virtual void AddTo(Entity *);
+    virtual void RemoveFrom(Entity *);
 };

@@ -16,6 +16,7 @@ int SystemWorldRender::refresh_count = 0;
 // directX
 // openGL
 // win32
+// PDCurses
 
 SystemWorldRender::SystemWorldRender():m_iWorldID(0),System() {
 }
@@ -108,6 +109,46 @@ void SystemWorldRender::Update()
 
 #include <curses.h>
 
+#define BOADER 1
+
+static WINDOW *global_win = nullptr;
+
+static WINDOW *create_newwin(int height, int width, int starty, int startx)
+{
+    WINDOW *local_win;
+	local_win = newwin(height, width, starty, startx);
+	box(local_win, 0 , 0);		/* 0, 0 gives default characters 
+					 * for the vertical and horizontal
+					 * lines			*/
+	wrefresh(local_win);		/* Show that box 		*/
+	return local_win;
+}
+
+static void destroy_win(WINDOW *local_win)
+{	
+	/* box(local_win, ' ', ' '); : This won't produce the desired
+	 * result of erasing the window. It will leave it's four corners 
+	 * and so an ugly remnant of window. 
+	 */
+
+	// wborder(local_win, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+	// /* The parameters taken are 
+	//  * 1. win: the window on which to operate
+	//  * 2. ls: character to be used for the left side of the window 
+	//  * 3. rs: character to be used for the right side of the window 
+	//  * 4. ts: character to be used for the top side of the window 
+	//  * 5. bs: character to be used for the bottom side of the window 
+	//  * 6. tl: character to be used for the top left corner of the window 
+	//  * 7. tr: character to be used for the top right corner of the window 
+	//  * 8. bl: character to be used for the bottom left corner of the window 
+	//  * 9. br: character to be used for the bottom right corner of the window
+	//  */
+	// wrefresh(local_win);
+
+    wclear(local_win);
+	delwin(local_win);
+}
+
 SystemWorldRender::SystemWorldRender():m_iWorldID(0),System() {
 	initscr();
 	keypad(stdscr, TRUE);
@@ -124,45 +165,50 @@ void SystemWorldRender::DrawTerrain(TerrainConfig * terrainCfg) {
     int gridRow = terrainCfg->GetGridRow();
     int gridCol = terrainCfg->GetGridCol();
 
-    int starty = (LINES - gridRow) / 2;
-    int startx = (COLS - gridCol) / 2;
+    // ±2 for border
+    int starty = (LINES - gridRow - 2*BOADER) / 2;
+    int startx = (COLS - gridCol - 2*BOADER) / 2;
+
+    if(global_win) destroy_win(global_win);
+    global_win = create_newwin(gridRow + 2*BOADER, gridCol + 2*BOADER, starty, startx);
+
+    WINDOW *cur_win = global_win;
 
     for (int i=0; i<gridRow; i++) {
         for (int j=0; j<gridCol; j++) {
             grid_type gt = terrainCfg->GetGridType(j, gridRow-i-1);
             switch(gt) {
                 case Walkable:
-                    // mvwaddch(stdscr, starty+i, startx+j, ACS_BULLET);
+                    // mvwaddch(cur_win, starty+i, startx+j, ACS_BULLET);
                     break;
                 case Walkable_Non:
-                    mvwaddch(stdscr, starty+i, startx+j, ACS_CKBOARD);
+                    mvwaddch(cur_win, i+BOADER, j+BOADER, ACS_CKBOARD);
                     break;
                 case StartPoint:
-                    mvwaddch(stdscr, starty+i, startx+j, ACS_DIAMOND);
+                    mvwaddch(cur_win, i+BOADER, j+BOADER, ACS_DIAMOND);
                     break;
                 case Flyable:
-                    mvwaddch(stdscr, starty+i, startx+j, ACS_LANTERN);
+                    mvwaddch(cur_win, i+BOADER, j+BOADER, ACS_LANTERN);
                     break;
                 case EndPoint:
-                    mvwaddch(stdscr, starty+i, startx+j, ACS_PLUS);
+                    mvwaddch(cur_win, i+BOADER, j+BOADER, ACS_PLUS);
                     break;
                 case HeroPoint:
-                    mvwaddch(stdscr, starty+i, startx+j, ACS_PLMINUS);
+                    mvwaddch(cur_win, i+BOADER, j+BOADER, ACS_PLMINUS);
                     break;
                 default:
                     break;
             }
         }
     }
-    wrefresh(stdscr);
+    wrefresh(cur_win);
 }
 
 void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &entity_ids) {
     int gridRow = terrainCfg->GetGridRow();
     int gridCol = terrainCfg->GetGridCol();
-
-    int starty = (LINES - gridRow) / 2;
-    int startx = (COLS - gridCol) / 2;
+    
+    WINDOW *cur_win = global_win;
     
     // get entity from world
     std::set<int>::iterator it = entity_ids.begin();
@@ -184,15 +230,15 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
                 int pCol = terrainCfg->Pos2GridCol(position);
 
                 if (heading.x > 0)
-                    mvwaddch(stdscr,starty+pRow,startx+pCol,ACS_LTEE);
+                    mvwaddch(cur_win, pRow+BOADER, pCol+BOADER, ACS_LTEE);
                 else if(heading.z > 0)
-                    mvwaddch(stdscr,starty+pRow,startx+pCol,ACS_BTEE);
+                    mvwaddch(cur_win, pRow+BOADER, pCol+BOADER, ACS_BTEE);
                 else if(heading.x < 0)
-                    mvwaddch(stdscr,starty+pRow,startx+pCol,ACS_RTEE);
+                    mvwaddch(cur_win, pRow+BOADER, pCol+BOADER, ACS_RTEE);
                 else if(heading.z < 0)
-                    mvwaddch(stdscr,starty+pRow,startx+pCol,ACS_TTEE);
+                    mvwaddch(cur_win, pRow+BOADER, pCol+BOADER, ACS_TTEE);
                 else
-                    mvwaddch(stdscr,starty+pRow,startx+pCol,ACS_BTEE);
+                    mvwaddch(cur_win, pRow+BOADER, pCol+BOADER, ACS_BTEE);
 
                 c = e->GetComponent(Component::health_point);
                 if (c) {
@@ -208,13 +254,12 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
 
         it++;
     }
-    wrefresh(stdscr);
+
+    wrefresh(cur_win);
 }
 
 void SystemWorldRender::Update()
 {
-	clear();
-
     // which world need render
     World *world = gWorldMgr.GetMember(m_iWorldID);
     if (!world){
@@ -222,12 +267,12 @@ void SystemWorldRender::Update()
         return;
     }
     
+	mvprintw(LINES - 1, 0, "refresh count %d, LINES: %d, COLS: %d", refresh_count++, LINES, COLS);
+    refresh();
+
     TerrainConfig *terrainCfg = world->GetTerrainConfig();
     DrawTerrain(terrainCfg);
     DrawEntity(terrainCfg, world->GetEntityIDs());
-
-	mvprintw(LINES - 1, 0, "refresh count %d, LINES: %d, COLS: %d", refresh_count++, LINES, COLS);
-    refresh();
 }
 
 #endif

@@ -1,6 +1,9 @@
 #include "Entity.h"
+#include "Core/Log/Log.h"
 #include "Component/ComponentLocation.h"
 #include "Component/ComponentHealthPoint.h"
+#include "Component/ComponentMoving.h"
+#include "Component/ComponentPathfinding.h"
 
 int Entity::m_iNextValidID = 0;
 
@@ -41,12 +44,20 @@ Component* Entity::AddComponent(Component::Type component_type) {
         case Component::health_point:
             c = new ComponentHealthPoint();
             break;
+        case Component::path_finding:
+            c = new ComponentPathfinding();
+            break;
+        case Component::moving:
+            c = new ComponentMoving();
+            break;
         default:
             break;
     }
+
     if(c) {
         c->AddTo(this);
         m_mgrComponent.AddMember(c->GetID(), c);
-    }
+    } else
+        Log::Error("Component(%d) not exist!", component_type);
     return c;
 }
