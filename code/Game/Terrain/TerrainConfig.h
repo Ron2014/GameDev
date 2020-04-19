@@ -17,6 +17,7 @@ public:
 
     int Pos2GridRow(const Vector3D &pos);
     int Pos2GridCol(const Vector3D &pos);
+    void WrapAround(Vector3D &pos);
 
     grid_type GetPointType(const Vector3D &pos);
     grid_type GetGridType(int col, int row);
@@ -32,9 +33,9 @@ private:
     std::string _sStage;
     std::string _sLevel;
 
-    double _dLineWidth;
-    double _dLineLength;
-    int _iLinePix;
+    double _dLineWidth;             // the thickness of grid line
+    double _dLineLength;            // the length of grid line
+    int _iLinePix;                  // count of pixel for a grid line
 
     int _iGridRow;
     int _iGridCol;

@@ -56,7 +56,7 @@ Component* Entity::AddComponent(Component::Type component_type) {
 
     if(c) {
         c->AddTo(this);
-        m_mgrComponent.AddMember(c->GetID(), c);
+        m_mgrComponent.AddMember(component_type, c);
     } else
         Log::Error("Component(%d) not exist!", component_type);
     return c;

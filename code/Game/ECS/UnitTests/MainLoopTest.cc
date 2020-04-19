@@ -33,30 +33,36 @@ TEST(MainLoop) {
 
     ComponentLocation *c = (ComponentLocation *)entity0.AddComponent(Component::location);
     c->iWorldID = world0.GetID();
-    c->vPosition.One();
+    c->vPosition.Zero();
     c->vHeading.Zero();
 
     ComponentMoving *c1 = (ComponentMoving *)entity0.AddComponent(Component::moving);
     c1->vVelocity.Zero();
     c1->iMass = 100;
-    c1->iMaxSpeed = 100;
-    c1->iMaxForce = 100;
+    c1->iMaxSpeed = 1;
+    c1->iMaxForce = 1;
     c1->iMaxTurnRate = 0;
 
     world0.Enter(&entity0);
 
     SystemWorldRender::Instance()->SetWorldID(world0.GetID());
+    SystemMotionSteer::Instance()->SetPlayerID(entity0.GetID());
+
     while(true) {
+        SystemWorldRender::Instance()->Update();
         SystemMotionSteer::Instance()->Update();
         SystemPathfinding::Instance()->Update();
         SystemMoving::Instance()->Update();
-        SystemWorldRender::Instance()->Update();
 
 #if FUTURE_WINDOWS
         Sleep(1000);
 #else
-        sleep(1);
+        sleep(0.0625);
 #endif
+        if (gExitGame) {
+            // finish stuff at current frame
+            break;
+        }
     }
 
     gWorldMgr.RemoveMember(world0.GetID());

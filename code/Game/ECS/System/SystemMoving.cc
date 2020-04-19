@@ -40,16 +40,31 @@ void SystemMoving::Update() {
             Component *c = e->GetComponent(Component::location);
 
             // get position & heading
-            Vector3D position = ((ComponentLocation *)c)->vPosition;
-            Vector3D heading = ((ComponentLocation *)c)->vHeading;
+            Vector3D &position = ((ComponentLocation *)c)->vPosition;
+            Vector3D &heading = ((ComponentLocation *)c)->vHeading;
+
+            int world_id = ((ComponentLocation *)c)->iWorldID;
+            World *world = gWorldMgr.GetMember(world_id);
+            TerrainConfig *terrainCfg = world->GetTerrainConfig();
 
             c = e->GetComponent(Component::moving);
 
             // variable for moving
-            Vector3D velocity = ((ComponentMoving *)c)->vVelocity;
+            Vector3D &velocity = ((ComponentMoving *)c)->vVelocity;
+
+            // assume 1 second passed
+            double passedTime = 1.0;
+            position += velocity * passedTime;
+
+            // collision check
+            
+            // bounds check
+            terrainCfg->WrapAround(position);
 
         } else {
             Log::Error("Render Error: entity %d not exist!", *it);
         }
+
+        it++;
     }
 }

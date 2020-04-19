@@ -8,9 +8,7 @@ protected:
     int m_iPlayerID;
     std::set<int> m_sHoldingKeys;
 
-    SystemMotionSteer():m_iPlayerID(0), System() {
-        SetType(System::motion_steer);
-    }
+    SystemMotionSteer();
 
 public:
     void SetPlayerID(int playerID) { m_iPlayerID = playerID; }

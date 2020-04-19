@@ -14,9 +14,9 @@ char * TerrainConfig::MAP_FILE_PATH = "/mnt/e/GitHub/GameDev/resource/maps";
 #endif
 
 TerrainConfig::TerrainConfig():
-    _dLineWidth(1.0),
+    _dLineWidth(0.05),
     _dLineLength(1.0),
-    _iLinePix(4){
+    _iLinePix(1){
 }
 
 TerrainConfig::~TerrainConfig() {
@@ -181,11 +181,25 @@ int TerrainConfig::Pos2GridRow(const Vector3D &pos) {
 }
 
 int TerrainConfig::Pos2GridCol(const Vector3D &pos) {
-    return int(pos.x / _dLineWidth);
+    return int(pos.x / _dLineLength);
+}
+
+void TerrainConfig::WrapAround(Vector3D &pos) {
+    // map size
+    double map_width = _dLineLength * _iGridCol;
+    double map_height = _dLineLength * _iGridRow;
+
+    if (pos.x < 0) pos.x += map_width;
+    if (pos.z < 0) pos.z += map_height;
+    
+    int xtimes = int(pos.x / map_width);
+    int ztimes = int(pos.z / map_height);
+    pos.x -= xtimes * map_width;
+    pos.z -= ztimes * map_height;
 }
 
 grid_type TerrainConfig::GetPointType(const Vector3D &pos) {
-    int col = int(pos.x / _dLineWidth);
+    int col = int(pos.x / _dLineLength);
     int row = int(pos.z / _dLineLength);
     return GetGridType(col, row);
 }

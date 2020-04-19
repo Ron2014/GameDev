@@ -74,6 +74,13 @@ fips_begin_module(Core)
         ObjectContainer.h
     )
 
+    if(FIPS_POSIX)
+        fips_dir(Util)
+        fips_files(
+            NcursesUtil.h
+        )
+    endif()
+
     fips_dir(.)
     fips_files(
         StdFuture.h

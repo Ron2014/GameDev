@@ -49,14 +49,14 @@ void SystemPathfinding::Update() {
             Component *c = e->GetComponent(Component::location);
 
             // get position & heading
-            Vector3D position = ((ComponentLocation *)c)->vPosition;
-            Vector3D heading = ((ComponentLocation *)c)->vHeading;
+            Vector3D &position = ((ComponentLocation *)c)->vPosition;
+            Vector3D &heading = ((ComponentLocation *)c)->vHeading;
 
             c = e->GetComponent(Component::path_finding);
 
             // variable for pathfinding
             PathNode *node = ((ComponentPathfinding *)c)->head;
-            Vector3D nextPos = node->point;
+            Vector3D &nextPos = node->point;
 
             double distance = nextPos.Distance(position);
             if (Math::isEqual(distance, 0.0)) {
@@ -70,10 +70,10 @@ void SystemPathfinding::Update() {
                     nextPos = node->point;
                     c = e->GetComponent(Component::moving);
 
-                    Vector3D direction = nextPos - position;
+                    Vector3D &velocity = ((ComponentMoving *)c)->vVelocity;
+                    velocity = nextPos - position;
                     int maxSpeed = ((ComponentMoving *)c)->iMaxSpeed;
-                    direction.Truncate(maxSpeed);
-                    ((ComponentMoving *)c)->vVelocity = direction;
+                    velocity.Truncate(maxSpeed);
 
                 } else {
                     // finish pathfinding

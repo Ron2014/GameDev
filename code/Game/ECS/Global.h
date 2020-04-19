@@ -6,3 +6,4 @@
 // all world & entity
 extern ObjectManager<World> gWorldMgr;
 extern ObjectManager<Entity> gEntityMgr;
+extern bool gExitGame;
