@@ -6,7 +6,6 @@ class SystemMotionSteer: public System
 protected:
     // which player are you controlling
     int m_iPlayerID;
-    std::set<int> m_sHoldingKeys;
 
     SystemMotionSteer();
 

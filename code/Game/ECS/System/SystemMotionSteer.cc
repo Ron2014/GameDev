@@ -10,24 +10,6 @@ using namespace Future;
  * ComponentMoving
 */
 
-#if FUTURE_WINDOWS
-
-SystemMotionSteer::SystemMotionSteer():m_iPlayerID(0), System() {
-    SetType(System::motion_steer);
-}
-
-void SystemMotionSteer::Update() {
-    Entity *e = gEntityMgr.GetMember(m_iPlayerID);
-    if (e) {
-        // signal from keyboard
-        // signal from joystick(xbox controller)
-    } else {
-        Log::Error("Render Error: entity %d not exist!", m_iPlayerID);
-    }
-}
-
-#else
-
 #include "Core/Util/NcursesUtil.h"
 
 static WINDOW *control_win = nullptr;
@@ -39,16 +21,12 @@ SystemMotionSteer::SystemMotionSteer():m_iPlayerID(0), System() {
 	cbreak();
 	keypad(stdscr, TRUE);
     noecho();
-    // timeout(CURSES_TIMEOUT);
-    control_win = create_newwin(1+2*CURSES_BOADER, 20+2*CURSES_BOADER, 0, 0);
-    wtimeout(control_win, CURSES_TIMEOUT);
+    /* Waits for TIME_OUT milliseconds */
+    timeout(CURSES_TIMEOUT);
 }
 
 void SystemMotionSteer::Update() {
-    int ch = wgetch(control_win); /* Waits for TIME_OUT milliseconds */
-	// if(ch == ERR)
-	// 	return;
-
+    int ch = getch();
     if(ch == KEY_F(1)) {
         gExitGame = true;
         return;
@@ -57,9 +35,6 @@ void SystemMotionSteer::Update() {
     Vector3D pos;
     Entity *e = gEntityMgr.GetMember(m_iPlayerID);
     if (e) {
-        // signal from keyboard
-        // signal from joystick(xbox controller)
-
         ComponentMoving *c = (ComponentMoving *)e->GetComponent(Component::moving);
         ComponentLocation *l = (ComponentLocation *)e->GetComponent(Component::location);
         pos = l->vPosition;
@@ -88,8 +63,15 @@ void SystemMotionSteer::Update() {
         Log::Error("Render Error: entity %d not exist!", m_iPlayerID);
     }
 
-    mvwprintw(control_win, 1, 1, "%c pos(%.02f, %.02f)", ch, pos.x, pos.z);
-    wrefresh(control_win);
-}
+    if (!control_win || ch != ERR) {
+        if (control_win) destroy_win(control_win);
+        control_win = create_newwin(10+2*CURSES_BOADER, 20+2*CURSES_BOADER, 0, 0);
 
-#endif
+        mvwprintw(control_win, 1, 1, "Move:wasd");
+        mvwprintw(control_win, 2, 1, "Exit:F1");
+        mvwprintw(control_win, 3, 1, "POS:%.02f, %.02f", pos.x, pos.z);
+        mvwprintw(control_win, 4, 1, "Pressed:%c", ch);
+
+        wrefresh(control_win);
+    }
+}

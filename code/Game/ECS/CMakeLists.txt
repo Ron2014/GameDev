@@ -1,7 +1,10 @@
 fips_begin_module(ECS)
     fips_include_directories(.)
 
-    if (FIPS_POSIX)
+    if (FIPS_WINDOWS)
+        fips_include_directories(../../Ext/PDCurses)
+        fips_deps(PDCurses)
+    else()
         fips_include_directories(../../Ext/ncurses-6.2/include)
         link_directories(../../Ext/ncurses-6.2/lib)
         fips_libs(

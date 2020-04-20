@@ -16,7 +16,11 @@ protected:
     void DrawEntity(TerrainConfig *terrainCfg, std::set<int> &entity_ids);
 
 public:
-    void SetWorldID(int worldID) { m_iWorldID = worldID; }
+    void SetWorldID(int worldID) { 
+        m_iWorldID = worldID;
+        gWatchingSceneID = worldID;
+        gRefreshScene = true;
+    }
     int GetWorldID() { return m_iWorldID; }
 
     virtual void Update();

@@ -1,6 +1,10 @@
 #pragma once
 #include "Global.h"
 
+bool gExitGame = false;
+
 ObjectManager<World> gWorldMgr;
 ObjectManager<Entity> gEntityMgr;
-bool gExitGame = false;
+
+int gWatchingSceneID = 0;
+bool gRefreshScene = false;

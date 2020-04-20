@@ -16,8 +16,10 @@
 
 #if FUTURE_WINDOWS
 #include <windows.h>
+#include <time.h>
 #else
 #include <unistd.h>
+#include <sys/time.h>
 #endif
 
 /**
@@ -45,6 +47,12 @@ TEST(MainLoop) {
 
     world0.Enter(&entity0);
 
+#if FUTURE_WINDOWS
+    srand((unsigned int)time((time_t *)0));
+#else
+    srand(time(NULL));
+#endif
+
     SystemWorldRender::Instance()->SetWorldID(world0.GetID());
     SystemMotionSteer::Instance()->SetPlayerID(entity0.GetID());
 
@@ -55,7 +63,7 @@ TEST(MainLoop) {
         SystemMoving::Instance()->Update();
 
 #if FUTURE_WINDOWS
-        Sleep(62.5);
+        Sleep(62);
 #else
         sleep(0.0625);
 #endif
