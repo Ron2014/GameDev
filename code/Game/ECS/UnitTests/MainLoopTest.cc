@@ -55,7 +55,7 @@ TEST(MainLoop) {
         SystemMoving::Instance()->Update();
 
 #if FUTURE_WINDOWS
-        Sleep(1000);
+        Sleep(62.5);
 #else
         sleep(0.0625);
 #endif

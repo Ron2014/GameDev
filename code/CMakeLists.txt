@@ -45,10 +45,10 @@ endif()
 fips_include_directories(.)
 fips_include_directories(Engine)
 fips_include_directories(Game)
-# fips_include_directories(Ext)
+fips_include_directories(Ext)
 
-# fips_ide_group(Ext)
-# fips_add_subdirectory(Ext)
+fips_ide_group(Ext)
+fips_add_subdirectory(Ext)
 
 fips_ide_group(Engine)
 fips_add_subdirectory(Engine)
