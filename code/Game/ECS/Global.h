@@ -11,5 +11,5 @@ extern ObjectManager<World> gWorldMgr;
 extern ObjectManager<Entity> gEntityMgr;
 
 // has any moving entity, need refresh scene
-extern int gWatchingSceneID;
-extern bool gRefreshScene;
+extern int gWatchingWorldID;
+extern bool gRefreshWorld;

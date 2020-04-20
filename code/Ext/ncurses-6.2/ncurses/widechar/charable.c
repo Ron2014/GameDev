@@ -35,17 +35,6 @@
 
 MODULE_ID("$Id: charable.c,v 1.8 2020/02/02 23:34:34 tom Exp $")
 
-NCURSES_EXPORT(bool) _nc_is_charable(wchar_t ch)
-{
-    bool result;
-#if HAVE_WCTOB
-    result = (wctob((wint_t) ch) == (int) ch);
-#else
-    result = (_nc_to_char(ch) >= 0);
-#endif
-    return result;
-}
-
 NCURSES_EXPORT(int) _nc_to_char(wint_t ch)
 {
     int result;
@@ -60,6 +49,17 @@ NCURSES_EXPORT(int) _nc_to_char(wint_t ch)
 	result = -1;
 #else
 #error expected either wctob/wctomb
+#endif
+    return result;
+}
+
+NCURSES_EXPORT(bool) _nc_is_charable(wchar_t ch)
+{
+    bool result;
+#if HAVE_WCTOB
+    result = (wctob((wint_t) ch) == (int) ch);
+#else
+    result = (_nc_to_char(ch) >= 0);
 #endif
     return result;
 }

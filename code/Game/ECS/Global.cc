@@ -6,5 +6,5 @@ bool gExitGame = false;
 ObjectManager<World> gWorldMgr;
 ObjectManager<Entity> gEntityMgr;
 
-int gWatchingSceneID = 0;
-bool gRefreshScene = false;
+int gWatchingWorldID = 0;
+bool gRefreshWorld = false;

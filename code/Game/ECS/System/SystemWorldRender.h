@@ -18,8 +18,8 @@ protected:
 public:
     void SetWorldID(int worldID) { 
         m_iWorldID = worldID;
-        gWatchingSceneID = worldID;
-        gRefreshScene = true;
+        gWatchingWorldID = worldID;
+        gRefreshWorld = true;
     }
     int GetWorldID() { return m_iWorldID; }
 

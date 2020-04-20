@@ -36,6 +36,9 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
+#include <curses.priv.h>
+#include <SigAction.h>
+
 MODULE_ID("$Id: sigaction.c,v 1.15 2020/02/02 23:34:34 tom Exp $")
 
 static int

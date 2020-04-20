@@ -127,8 +127,8 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
 
 void SystemWorldRender::Update()
 {
-    if (!gRefreshScene) return;
-    gRefreshScene = false;
+    if (!gRefreshWorld) return;
+    gRefreshWorld = false;
     
     // which world need render
     World *world = gWorldMgr.GetMember(m_iWorldID);

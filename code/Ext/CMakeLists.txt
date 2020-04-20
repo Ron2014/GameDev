@@ -1,3 +1,5 @@
 if (FIPS_WINDOWS)
 fips_add_subdirectory(PDCurses)
+else()
+fips_add_subdirectory(ncurses-6.2)
 endif()

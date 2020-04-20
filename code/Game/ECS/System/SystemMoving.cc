@@ -51,7 +51,7 @@ void SystemMoving::Update() {
 
             // variable for moving
             Vector3D &velocity = ((ComponentMoving *)c)->vVelocity;
-            if (world_id == gWatchingSceneID && !velocity.isZero()) gRefreshScene = true;
+            if (world_id == gWatchingWorldID && !velocity.isZero()) gRefreshWorld = true;
 
             // assume 1 second passed
             double passedTime = 1.0;

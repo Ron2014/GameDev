@@ -5,14 +5,15 @@ fips_begin_module(ECS)
         fips_include_directories(../../Ext/PDCurses)
         fips_deps(PDCurses)
     else()
+        # fips_include_directories(../../Ext/ncurses-6.2/include)
+        # link_directories(../../Ext/ncurses-6.2/lib)
+        # fips_libs(
+        #     libncurses_g.a
+        #     libncurses.a
+        #     libncurses++_g.a
+        #     libncurses++.a
+        # )
         fips_include_directories(../../Ext/ncurses-6.2/include)
-        link_directories(../../Ext/ncurses-6.2/lib)
-        fips_libs(
-            libncurses_g.a
-            libncurses.a
-            libncurses++_g.a
-            libncurses++.a
-        )
     endif()
 
     fips_files_ex(Entity *.* GROUP "Entity")
@@ -26,7 +27,12 @@ fips_begin_module(ECS)
         Global.cc
     )
 
-    fips_deps(Terrain)
+    if(FIPS_WINDOWS)
+        fips_deps(Terrain PDCurses)
+    else()
+        fips_deps(Terrain ncurses)
+    endif()
+    
 fips_end_module()
 
 fips_begin_unittest(ECS)
