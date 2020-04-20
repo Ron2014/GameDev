@@ -3,8 +3,12 @@ fips_begin_module(ECS)
 
     if (FIPS_WINDOWS)
         fips_include_directories(../../Ext/PDCurses)
-        fips_deps(PDCurses)
     else()
+        # # if you want to use lib directly in linux
+        # # enter ncurses-6.2 do these command
+        # # $./configure && sudo make
+        # # and then use the library like this
+
         # fips_include_directories(../../Ext/ncurses-6.2/include)
         # link_directories(../../Ext/ncurses-6.2/lib)
         # fips_libs(
@@ -13,6 +17,7 @@ fips_begin_module(ECS)
         #     libncurses++_g.a
         #     libncurses++.a
         # )
+
         fips_include_directories(../../Ext/ncurses-6.2/include)
     endif()
 
