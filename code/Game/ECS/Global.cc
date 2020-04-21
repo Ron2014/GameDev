@@ -8,3 +8,6 @@ ObjectManager<Entity> gEntityMgr;
 
 int gWatchingWorldID = 0;
 bool gRefreshWorld = false;
+
+int gContollingEntityID = 0;
+bool gRefreshControl = false;

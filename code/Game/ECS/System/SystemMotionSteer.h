@@ -10,7 +10,11 @@ protected:
     SystemMotionSteer();
 
 public:
-    void SetPlayerID(int playerID) { m_iPlayerID = playerID; }
+    void SetPlayerID(int playerID) {
+        m_iPlayerID = playerID;
+        gContollingEntityID = playerID;
+        gRefreshControl = true;
+    }
     int GetPlayerID() { return m_iPlayerID; }
     
     virtual void Update();

@@ -27,21 +27,25 @@ SystemWorldRender::~SystemWorldRender() {
 
 void SystemWorldRender::DrawTerrain(TerrainConfig * terrainCfg) {
     // render terrain of this world
+    int linePixel = terrainCfg->GetLinePixel();
     int gridRow = terrainCfg->GetGridRow();
     int gridCol = terrainCfg->GetGridCol();
 
+    // screen pixel
+    int swidth = linePixel * gridCol;
+    int sheight = linePixel * gridRow;
+
     // ±2 for border
-    int starty = (LINES - gridRow - 2*CURSES_BOADER) / 2;
-    int startx = (COLS - gridCol - 2*CURSES_BOADER) / 2;
+    int starty = (LINES - sheight - 2*CURSES_BOADER) / 2;
+    int startx = (COLS - swidth - 2*CURSES_BOADER) / 2;
 
     if(scene_win) destroy_win(scene_win);
-    scene_win = create_newwin(gridRow + 2*CURSES_BOADER, gridCol + 2*CURSES_BOADER, starty, startx);
+    scene_win = create_newwin(sheight + 2*CURSES_BOADER, swidth + 2*CURSES_BOADER, starty, startx);
 
     WINDOW *cur_win = scene_win;
-
-    for (int i=0; i<gridRow; i++) {
-        for (int j=0; j<gridCol; j++) {
-            grid_type gt = terrainCfg->GetGridType(j, gridRow-i-1);
+    for (int i=0; i<sheight; i++) {
+        for (int j=0; j<swidth; j++) {
+            grid_type gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
             switch(gt) {
                 case Walkable:
                     // mvwaddch(cur_win, starty+i, startx+j, ACS_BULLET);
@@ -70,8 +74,14 @@ void SystemWorldRender::DrawTerrain(TerrainConfig * terrainCfg) {
 }
 
 void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &entity_ids) {
+    int linePixel = terrainCfg->GetLinePixel();
     int gridRow = terrainCfg->GetGridRow();
     int gridCol = terrainCfg->GetGridCol();
+    double lineLength = terrainCfg->GetLineLength();
+
+    // screen pixel
+    int swidth = linePixel * gridCol;
+    int sheight = linePixel * gridRow;
     
     WINDOW *cur_win = scene_win;
     
@@ -79,7 +89,7 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
     std::set<int>::iterator it = entity_ids.begin();
 	attron(A_BOLD);
 
-    while( it != entity_ids.end()) {
+    while(it != entity_ids.end()) {
         // entity exist ?
         Entity *e = gEntityMgr.GetMember(*it);
 
@@ -92,19 +102,19 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
                 Vector3D &position = ((ComponentLocation *)c)->vPosition;
                 Vector3D &heading = ((ComponentLocation *)c)->vHeading;
 
-                int pRow = gridRow-terrainCfg->Pos2GridRow(position)-1;
-                int pCol = terrainCfg->Pos2GridCol(position);
+                int xpixel = int(position.x * linePixel / lineLength);
+                int ypixel = sheight - int(position.z * linePixel / lineLength) - 1;
 
                 if (heading.x > 0)
-                    mvwaddch(cur_win, pRow+CURSES_BOADER, pCol+CURSES_BOADER, ACS_LTEE);
+                    mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_LTEE);
                 else if(heading.z > 0)
-                    mvwaddch(cur_win, pRow+CURSES_BOADER, pCol+CURSES_BOADER, ACS_BTEE);
+                    mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_BTEE);
                 else if(heading.x < 0)
-                    mvwaddch(cur_win, pRow+CURSES_BOADER, pCol+CURSES_BOADER, ACS_RTEE);
+                    mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_RTEE);
                 else if(heading.z < 0)
-                    mvwaddch(cur_win, pRow+CURSES_BOADER, pCol+CURSES_BOADER, ACS_TTEE);
+                    mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_TTEE);
                 else
-                    mvwaddch(cur_win, pRow+CURSES_BOADER, pCol+CURSES_BOADER, ACS_BTEE);
+                    mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_BTEE);
 
                 c = e->GetComponent(Component::health_point);
                 if (c) {

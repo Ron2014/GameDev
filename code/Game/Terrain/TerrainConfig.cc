@@ -31,6 +31,14 @@ int TerrainConfig::GetGridCol() {
     return _iGridCol;
 }
 
+int TerrainConfig::GetLinePixel() {
+    return _iLinePix;
+}
+
+double TerrainConfig::GetLineLength() {
+    return _dLineLength;
+}
+
 void TerrainConfig::LoadData(int id) {
     // get filename from id
 }

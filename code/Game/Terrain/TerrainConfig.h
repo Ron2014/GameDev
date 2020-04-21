@@ -24,6 +24,8 @@ public:
 
     int GetGridRow();
     int GetGridCol();
+    int GetLinePixel();
+    double GetLineLength();
 
 private:
     const int VERSION = 10;
