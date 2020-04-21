@@ -11,6 +11,7 @@ public:
         health_point,
         moving,
         path_finding,
+        painter,
         TypeCount,
     };
     

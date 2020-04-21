@@ -7,6 +7,7 @@ std::string component_names[Component::TypeCount] = {
     "health_point",
     "moving",
     "path_finding",
+    "painter",
 };
 
 Component::Component() {

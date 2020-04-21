@@ -45,29 +45,9 @@ void SystemWorldRender::DrawTerrain(TerrainConfig * terrainCfg) {
     WINDOW *cur_win = scene_win;
     for (int i=0; i<sheight; i++) {
         for (int j=0; j<swidth; j++) {
-            grid_type gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
-            switch(gt) {
-                case Walkable:
-                    // mvwaddch(cur_win, starty+i, startx+j, ACS_BULLET);
-                    break;
-                case Walkable_Non:
-                    mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_CKBOARD);
-                    break;
-                case StartPoint:
-                    mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_DIAMOND);
-                    break;
-                case Flyable:
-                    mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_LANTERN);
-                    break;
-                case EndPoint:
-                    mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_PLUS);
-                    break;
-                case HeroPoint:
-                    mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_PLMINUS);
-                    break;
-                default:
-                    break;
-            }
+            TerrainGrid::Type gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
+            chtype ch = grid_chtype[gt];
+            if (ch) mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ch);
         }
     }
     wrefresh(cur_win);

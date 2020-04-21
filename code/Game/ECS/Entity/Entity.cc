@@ -5,11 +5,18 @@
 #include "Component/ComponentMoving.h"
 #include "Component/ComponentPathfinding.h"
 
+#include <curses.h>
+
 int Entity::m_iNextValidID = 0;
 
 std::string entity_names[Entity::TypeCount] = {
     "player",
     "monster",
+    "painter",
+};
+
+chtype entity_chtype[] = {
+    0, 0, 0
 };
 
 Entity::Entity() {

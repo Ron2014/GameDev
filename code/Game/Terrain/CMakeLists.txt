@@ -1,8 +1,35 @@
 fips_begin_module(Terrain)
     fips_include_directories(./)
+
+    if (FIPS_WINDOWS)
+        fips_include_directories(../../Ext/PDCurses)
+    else()
+        # # if you want to use lib directly in linux
+        # # enter ncurses-6.2 do these command
+        # # $./configure && sudo make
+        # # and then use the library like this
+
+        # fips_include_directories(../../Ext/ncurses-6.2/include)
+        # link_directories(../../Ext/ncurses-6.2/lib)
+        # fips_libs(
+        #     libncurses_g.a
+        #     libncurses.a
+        #     libncurses++_g.a
+        #     libncurses++.a
+        # )
+
+        fips_include_directories(../../Ext/ncurses-6.2/include)
+    endif()
+    
     fips_files_ex(. *.h GROUP "Header Files")
     fips_files_ex(. *.cc GROUP "Source Files")
-    fips_deps(Core)
+
+    if (FIPS_WINDOWS)
+        fips_deps(Core PDCurses)
+    else()
+        fips_deps(Core ncurses)
+    endif()
+
 fips_end_module()
 
 fips_begin_unittest(Terrain)

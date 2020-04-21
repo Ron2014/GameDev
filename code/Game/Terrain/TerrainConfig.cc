@@ -104,7 +104,7 @@ void TerrainConfig::LoadData(std::string filename) {
         _gridInfos[i].resize(_iGridCol);
         for (int j=0; j<_iGridCol; j++) {
             fin.read((char*)&gridType, sizeof(unsigned char));
-            _gridInfos[i][j].gridType = (grid_type)gridType;
+            _gridInfos[i][j].gridType = (TerrainGrid::Type)gridType;
 
             fin.read((char*)&x, sizeof(int));
             fin.read((char*)&y, sizeof(int));
@@ -206,13 +206,13 @@ void TerrainConfig::WrapAround(Vector3D &pos) {
     pos.z -= ztimes * map_height;
 }
 
-grid_type TerrainConfig::GetPointType(const Vector3D &pos) {
+TerrainGrid::Type TerrainConfig::GetPointType(const Vector3D &pos) {
     int col = int(pos.x / _dLineLength);
     int row = int(pos.z / _dLineLength);
     return GetGridType(col, row);
 }
 
-grid_type TerrainConfig::GetGridType(int col, int row) {
+TerrainGrid::Type TerrainConfig::GetGridType(int col, int row) {
     if (col < 0 || col >= _iGridCol || row < 0 || row >= _iGridRow) // use [at] for out_of_range exception
         Log::Error("grid pos(%d,%d) out of bound(%d,%d)", col, row, _iGridCol, _iGridRow);
     return _gridInfos[row][col].gridType;

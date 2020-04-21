@@ -14,6 +14,7 @@ public:
         motion_steer,
         path_finding,
         moving,
+        painter,
         TypeCount,
     };
     

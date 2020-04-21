@@ -5,6 +5,7 @@ std::string system_names[System::TypeCount] = {
     "motion_steer",
     "path_finding",
     "moving",
+    "painter",
 };
 
 System::System() {

@@ -19,8 +19,8 @@ public:
     int Pos2GridCol(const Vector3D &pos);
     void WrapAround(Vector3D &pos);
 
-    grid_type GetPointType(const Vector3D &pos);
-    grid_type GetGridType(int col, int row);
+    TerrainGrid::Type GetPointType(const Vector3D &pos);
+    TerrainGrid::Type GetGridType(int col, int row);
 
     int GetGridRow();
     int GetGridCol();
@@ -44,5 +44,5 @@ private:
 
     Vector3D _vCenter;
 
-    std::vector<std::vector<GridInfo> > _gridInfos;
+    std::vector<std::vector<TerrainGrid> > _gridInfos;
 };
