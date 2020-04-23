@@ -6,7 +6,8 @@ class Entity;
 struct Component
 {
 public:
-    enum Type {
+    enum TYPE {
+        none,
         location,
         health_point,
         moving,
@@ -17,26 +18,25 @@ public:
     
     static const std::string component_names[Component::TypeCount];
 
-    static std::string GetName(Component::Type type) {
+    static std::string GetName(Component::TYPE type) {
         if (type < 0 || type >= Component::TypeCount)
             return "";
         return component_names[type];
     }
 
 protected:
-    Component::Type m_type;
     int m_ID;
     static int m_iNextValidID;
+    void SetID(int id) { m_ID = id; }
 
     Component();
-    
-    void SetID(int id) { m_ID = id; }
-    void SetType(Component::Type type) { m_type = type; }
 
 public:
+    static const TYPE type = Component::none;
     int GetID() { return m_ID; }
-    Component::Type GetType() { return m_type; }
-    std::string GetName() { return GetName(m_type); }
+    
+    virtual Component::TYPE GetType() { return type; }
+    virtual std::string GetName() { return GetName(type); }
 
     virtual void AddTo(Entity*);
     virtual void RemoveFrom(Entity*);

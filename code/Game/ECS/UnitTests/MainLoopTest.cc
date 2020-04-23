@@ -28,17 +28,15 @@
 TEST(MainLoop) {
     WorldMaintown world0;
     world0.LoadTerrain("helloworld2.txt");
-    gWorldMgr.AddMember(world0.GetID(), &world0);
 
     EntityPlayer entity0;
-    gEntityMgr.AddMember(entity0.GetID(), &entity0);
 
-    ComponentLocation *c = (ComponentLocation *)entity0.AddComponent(Component::location);
+    ComponentLocation *c = entity0.AddComponent<ComponentLocation>();
     c->iWorldID = world0.GetID();
     c->vPosition.Zero();
     c->vHeading.Zero();
 
-    ComponentMoving *c1 = (ComponentMoving *)entity0.AddComponent(Component::moving);
+    ComponentMoving *c1 = entity0.AddComponent<ComponentMoving>();
     c1->vVelocity.Zero();
     c1->iMass = 100;
     c1->iMaxSpeed = 1;

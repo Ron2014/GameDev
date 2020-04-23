@@ -16,6 +16,8 @@ protected:
     void DrawEntity(TerrainConfig *terrainCfg, std::set<int> &entity_ids);
 
 public:
+    static const System::TYPE type = System::world_render;
+
     void SetWorldID(int worldID) { 
         m_iWorldID = worldID;
         gWatchingWorldID = worldID;

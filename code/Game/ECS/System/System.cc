@@ -1,6 +1,7 @@
 #include "System.h"
 
-std::string system_names[System::TypeCount] = {
+const std::string System::system_names[System::TypeCount] = {
+    "none",
     "world_render",
     "motion_steer",
     "path_finding",

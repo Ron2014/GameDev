@@ -10,5 +10,5 @@ fips_files(
     SystemPainter.cc
 )
 
-fips_deps(Terrain ECS)
+fips_deps(ECS)
 fips_end_app()

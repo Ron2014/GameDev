@@ -16,7 +16,6 @@ static WINDOW *control_win = nullptr;
 
 SystemMotionSteer::SystemMotionSteer():m_iPlayerID(0), System() {
     printf("SystemMotionSteer::SystemMotionSteer\n");
-    SetType(System::motion_steer);
     
 	cbreak();
 	keypad(stdscr, TRUE);
@@ -43,8 +42,8 @@ void SystemMotionSteer::Update() {
     Vector3D pos;
     Entity *e = gEntityMgr.GetMember(m_iPlayerID);
     if (e) {
-        ComponentMoving *c = (ComponentMoving *)e->GetComponent(Component::moving);
-        ComponentLocation *l = (ComponentLocation *)e->GetComponent(Component::location);
+        ComponentMoving *c = e->GetComponent<ComponentMoving>();
+        ComponentLocation *l = e->GetComponent<ComponentLocation>();
         pos = l->vPosition;
 
         Vector3D v;

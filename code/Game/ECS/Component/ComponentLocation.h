@@ -6,14 +6,9 @@ using namespace Future;
 struct ComponentLocation : public Component
 {
 public:
-    ComponentLocation():Component() {
-        SetType(Component::location);
-    }
+    static const TYPE type = Component::location;
 
-    // id for world
-    int iWorldID;
-    // vector 3d for position
-    Vector3D vPosition;
-    // vector 3d for heading
-    Vector3D vHeading;
+    int iWorldID;           // id for world
+    Vector3D vPosition;     // vector 3d for position
+    Vector3D vHeading;      // vector 3d for heading
 };

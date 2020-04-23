@@ -8,5 +8,5 @@ public:
     ComponentPainter():Component() {
         SetType(Component::painter);
     }
-    TerrainGrid::Type pen;
+    TerrainGrid::TYPE pen;
 };

@@ -3,8 +3,9 @@
 
 bool gExitGame = false;
 
-ObjectManager<World> gWorldMgr;
-ObjectManager<Entity> gEntityMgr;
+ObjectManager<std::string, TerrainConfig> gTerrainConfigMgr;
+ObjectManager<int, World> gWorldMgr;
+ObjectManager<int, Entity> gEntityMgr;
 
 int gWatchingWorldID = 0;
 bool gRefreshWorld = false;

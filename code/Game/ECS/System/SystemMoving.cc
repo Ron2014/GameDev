@@ -12,7 +12,6 @@
 
 SystemMoving::SystemMoving(/* args */):System()
 {
-    SetType(System::moving);
 }
 
 SystemMoving::~SystemMoving()
@@ -36,18 +35,15 @@ void SystemMoving::Update() {
         Entity *e = gEntityMgr.GetMember(*it);
 
         if (e) {
-            // get ComponentLocation
-            Component *c = e->GetComponent(Component::location);
-
             // get position & heading
-            Vector3D &position = ((ComponentLocation *)c)->vPosition;
-            Vector3D &heading = ((ComponentLocation *)c)->vHeading;
-            int world_id = ((ComponentLocation *)c)->iWorldID;
-
-            c = e->GetComponent(Component::moving);
+            ComponentLocation *cl = e->GetComponent<ComponentLocation>();
+            Vector3D &position = cl->vPosition;
+            Vector3D &heading = cl->vHeading;
+            int world_id = cl->iWorldID;
 
             // variable for moving
-            Vector3D &velocity = ((ComponentMoving *)c)->vVelocity;
+            ComponentMoving *cv = e->GetComponent<ComponentMoving>();
+            Vector3D &velocity = cv->vVelocity;
             
             if (!velocity.isZero()) {
                 if (world_id == gWatchingWorldID) gRefreshWorld = true;

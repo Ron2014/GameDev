@@ -6,13 +6,13 @@ class WorldBattle: public World
 private:
     /* data */
 public:
+    static const World::TYPE type = World::battle;
     WorldBattle();
     ~WorldBattle();
 };
 
 WorldBattle::WorldBattle(/* args */):World()
 {
-    SetType(World::battle);
 }
 
 WorldBattle::~WorldBattle()

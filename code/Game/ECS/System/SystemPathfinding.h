@@ -9,6 +9,8 @@ protected:
     SystemPathfinding();
 
 public:
+    static const System::TYPE type = System::path_finding;
+
     ~SystemPathfinding();
     void RegisterEntity(int);
     void UnregisterEntity(int);

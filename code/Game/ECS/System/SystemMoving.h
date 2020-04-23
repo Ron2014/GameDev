@@ -9,6 +9,8 @@ protected:
     SystemMoving();
 
 public:
+    static const System::TYPE type = System::moving;
+
     ~SystemMoving();
     void RegisterEntity(int);
     void UnregisterEntity(int);

@@ -4,46 +4,46 @@
 
 namespace Future {
 
-template <class T>
+template <typename TK, class TV>
 class ObjectManager
 {
 private:
-    std::map<int, T*> m_map;
+    std::map<TK, TV*> m_map;
 
 public:
     ObjectManager();
     virtual ~ObjectManager();
 
-    virtual void AddMember(int, T*);
-    virtual void RemoveMember(const int);
-    virtual T* GetMember(const int);
+    virtual void AddMember(TK, TV*);
+    virtual void RemoveMember(const TK);
+    virtual TV* GetMember(const TK);
 };
 
-template <class T>
-ObjectManager<T>::ObjectManager() {
+template <typename TK, class TV>
+ObjectManager<TK, TV>::ObjectManager() {
 
 }
 
-template <class T>
-ObjectManager<T>::~ObjectManager() {
+template <typename TK, class TV>
+ObjectManager<TK, TV>::~ObjectManager() {
 
 }
 
-template <class T>
-void ObjectManager<T>::AddMember(int id, T* e){
+template <typename TK, class TV>
+void ObjectManager<TK, TV>::AddMember(TK id, TV* e){
     assert((m_map.find(id) == m_map.end()) && "member already exist!");
     m_map.insert(std::make_pair(id, e));
 }
 
-template <class T>
-void ObjectManager<T>::RemoveMember(const int id){
+template <typename TK, class TV>
+void ObjectManager<TK, TV>::RemoveMember(const TK id){
     assert((m_map.find(id) != m_map.end()) && "member don't exist!");
     m_map.erase(id);
 }
 
-template <class T>
-T* ObjectManager<T>::GetMember(const int id){
-    typename std::map<int, T*>::iterator it = m_map.find(id);
+template <typename TK, class TV>
+TV* ObjectManager<TK, TV>::GetMember(const TK id){
+    typename std::map<TK, TV*>::iterator it = m_map.find(id);
     if (it != m_map.end())
         return it->second;
     return nullptr;

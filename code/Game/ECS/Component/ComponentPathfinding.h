@@ -11,6 +11,8 @@ typedef struct PathNode{
 struct ComponentPathfinding: public Component
 {
 public:
+    static const TYPE type = Component::path_finding;
+    
     PathNode *head;
     
     ComponentPathfinding();

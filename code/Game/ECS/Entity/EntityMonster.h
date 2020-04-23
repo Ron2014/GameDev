@@ -6,13 +6,13 @@ class EntityMonster: public Entity
 private:
     /* data */
 public:
+    static const TYPE type = Entity::monster;
     EntityMonster();
     ~EntityMonster();
 };
 
 EntityMonster::EntityMonster():Entity()
 {
-    SetType(Entity::monster);
 }
 
 EntityMonster::~EntityMonster()

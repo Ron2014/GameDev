@@ -4,10 +4,9 @@
 
 struct ComponentHealthPoint : public Component
 {
-    ComponentHealthPoint():Component() {
-        SetType(Component::health_point);
-    }
-
+public:
+    static const TYPE type = Component::health_point;
+    
     int iMaxHP;
     int iCurHP;
 };

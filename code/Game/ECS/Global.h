@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Object/ObjectManager.h"
+#include "Terrain/TerrainConfig.h"
 #include "Entity/Entity.h"
 #include "World/World.h"
 
@@ -7,8 +8,9 @@
 extern bool gExitGame;
 
 // all world & entity
-extern ObjectManager<World> gWorldMgr;
-extern ObjectManager<Entity> gEntityMgr;
+extern ObjectManager<std::string, TerrainConfig> gTerrainConfigMgr;
+extern ObjectManager<int, World> gWorldMgr;
+extern ObjectManager<int, Entity> gEntityMgr;
 
 // has any moving entity, need refresh scene
 extern int gWatchingWorldID;

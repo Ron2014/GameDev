@@ -12,7 +12,6 @@
 
 SystemPathfinding::SystemPathfinding(/* args */):System()
 {
-    SetType(System::path_finding);
 }
 
 SystemPathfinding::~SystemPathfinding()
@@ -25,10 +24,10 @@ void SystemPathfinding::RegisterEntity(int entity_id) {
 
     // now, let's make a plan to get the target
     Entity *e = gEntityMgr.GetMember(entity_id);
-    Component *c = e->GetComponent(Component::location);
-    Vector3D position = ((ComponentLocation *)c)->vPosition;
-    c = e->GetComponent(Component::path_finding);
-    Vector3D destination = ((ComponentPathfinding *)c)->head->point;
+    ComponentLocation *cl = e->GetComponent<ComponentLocation>();
+    Vector3D position = cl->vPosition;
+    ComponentPathfinding *cp = e->GetComponent<ComponentPathfinding>();
+    Vector3D destination = cp->head->point;
 
     // TODO: how to arrive destination from position?
 }
@@ -45,17 +44,14 @@ void SystemPathfinding::Update() {
         Entity *e = gEntityMgr.GetMember(*it);
 
         if (e) {
-            // get ComponentLocation
-            Component *c = e->GetComponent(Component::location);
-
             // get position & heading
-            Vector3D &position = ((ComponentLocation *)c)->vPosition;
-            Vector3D &heading = ((ComponentLocation *)c)->vHeading;
-
-            c = e->GetComponent(Component::path_finding);
+            ComponentLocation *cl = e->GetComponent<ComponentLocation>();
+            Vector3D &position = cl->vPosition;
+            Vector3D &heading = cl->vHeading;
 
             // variable for pathfinding
-            PathNode *node = ((ComponentPathfinding *)c)->head;
+            ComponentPathfinding *cp = e->GetComponent<ComponentPathfinding>();
+            PathNode *node = cp->head;
             Vector3D &nextPos = node->point;
 
             double distance = nextPos.Distance(position);
@@ -63,21 +59,20 @@ void SystemPathfinding::Update() {
                 // arrive this node;
                 free(node);
                 node = node->next;
-                ((ComponentPathfinding *)c)->head = node;
+                cp->head = node;
 
                 if (node) {
                     // next target
                     nextPos = node->point;
-                    c = e->GetComponent(Component::moving);
-
-                    Vector3D &velocity = ((ComponentMoving *)c)->vVelocity;
+                    ComponentMoving *cm = e->GetComponent<ComponentMoving>();
+                    Vector3D &velocity = cm->vVelocity;
                     velocity = nextPos - position;
-                    int maxSpeed = ((ComponentMoving *)c)->iMaxSpeed;
+                    int maxSpeed = cm->iMaxSpeed;
                     velocity.Truncate(maxSpeed);
 
                 } else {
                     // finish pathfinding
-                    e->RemoveComponent(Component::path_finding);
+                    e->RemoveComponent<ComponentPathfinding>();
                 }
             }
 

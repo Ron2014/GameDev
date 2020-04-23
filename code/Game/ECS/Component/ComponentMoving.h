@@ -6,10 +6,8 @@ using namespace Future;
 struct ComponentMoving: public Component
 {
 public:
-    ComponentMoving():Component() {
-        SetType(Component::moving);
-    }
-
+    static const TYPE type = Component::moving;
+    
     Vector3D vVelocity;
     int iMass;
     int iMaxSpeed;

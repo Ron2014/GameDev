@@ -9,7 +9,8 @@
 class System
 {
 public:
-    enum Type {
+    enum TYPE {
+        none,
         world_render,
         motion_steer,
         path_finding,
@@ -20,7 +21,7 @@ public:
     
     static const std::string system_names[System::TypeCount];
 
-    static std::string GetName(System::Type type) {
+    static std::string GetName(System::TYPE type) {
         if (type < 0 || type >= System::TypeCount)
             return "";
         return system_names[type];
@@ -28,14 +29,13 @@ public:
 
 protected:    
     System();
-    System::Type m_type;
-    void SetType(System::Type type) { m_type = type; }
 
 public:
+    static const System::TYPE type = System::none;
     virtual ~System();
 
-    System::Type GetType() { return m_type; }
-    std::string GetName() { return GetName(m_type); }
+    virtual System::TYPE GetType() { return type; }
+    virtual std::string GetName() { return GetName(type); }
 
     virtual void Update()=0;
 };

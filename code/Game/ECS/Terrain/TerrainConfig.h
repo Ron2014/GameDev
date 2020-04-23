@@ -15,13 +15,12 @@ public:
     void SaveData();
     void DumpData();
 
-    int Pos2GridRow(const Vector3D &pos);
-    int Pos2GridCol(const Vector3D &pos);
     void WrapAround(Vector3D &pos);
 
-    TerrainGrid::Type GetPointType(const Vector3D &pos);
-    TerrainGrid::Type GetGridType(int col, int row);
+    TerrainGrid::TYPE GetPointType(const Vector3D &pos);
+    TerrainGrid::TYPE GetGridType(int col, int row);
 
+    std::string GetName();
     int GetGridRow();
     int GetGridCol();
     int GetLinePixel();

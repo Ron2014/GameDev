@@ -2,7 +2,11 @@
 #include "Entity/Entity.h"
 
 int Component::m_iNextValidID = 0;
-std::string component_names[Component::TypeCount] = {
+
+// Component::TYPE Component::type = Component::location;
+
+const std::string Component::component_names[Component::TypeCount] = {
+    "none",
     "location",
     "health_point",
     "moving",

@@ -10,6 +10,8 @@ protected:
     SystemMotionSteer();
 
 public:
+    static const System::TYPE type = System::motion_steer;
+
     void SetPlayerID(int playerID) {
         m_iPlayerID = playerID;
         gContollingEntityID = playerID;

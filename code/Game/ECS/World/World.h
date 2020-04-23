@@ -8,7 +8,8 @@
 class World
 {
 public:
-    enum Type {
+    enum TYPE {
+        none,
         maintown,
         battle,       // copy scenes
         TypeCount,
@@ -16,19 +17,18 @@ public:
 
     static const std::string world_names[World::TypeCount];
 
-    static std::string GetName(World::Type type) {
+    static std::string GetName(World::TYPE type) {
         if (type < 0 || type >= World::TypeCount)
             return "";
         return world_names[type];
     }
 
 protected:
-    World::Type m_type;
     int m_ID;
     static int m_iNextValidID;
 
     // terrain
-    TerrainConfig m_terrainConfig;
+    std::string m_sTerrainName;
 
     // entitys
     std::set<int> m_sEntityIDs;
@@ -36,23 +36,19 @@ protected:
     World();
 
     void SetID(int id) { m_ID = id; }
-    void SetType(World::Type type) { m_type = type; }
 
 public:
+    static const World::TYPE type = World::none;
     virtual ~World();
 
-    void LoadTerrain(std::string filename) {
-        m_terrainConfig.LoadData(filename);
-    }
-
-    TerrainConfig *GetTerrainConfig() {
-        return &m_terrainConfig;
-    }
+    void LoadTerrain(std::string filename);
+    TerrainConfig *GetTerrainConfig();
 
     std::set<int>& GetEntityIDs() { return m_sEntityIDs; }
     int GetID() { return m_ID; }
-    World::Type GetType() { return m_type; }
-    std::string GetName() { return GetName(m_type); }
+
+    virtual World::TYPE GetType() { return type; }
+    virtual std::string GetName() { return GetName(type); }
 
     virtual void Enter(Entity*);
     virtual void Leave(Entity*);

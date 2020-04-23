@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <cassert>
+#include "Global.h"
 #include "TerrainConfig.h"
 #include "Core/Log/Log.h"
 #include "Core/IO/Path.h"
@@ -21,6 +21,10 @@ TerrainConfig::TerrainConfig():
 
 TerrainConfig::~TerrainConfig() {
     _gridInfos.clear();
+}
+
+std::string TerrainConfig::GetName() {
+    return _sName;
 }
 
 int TerrainConfig::GetGridRow() {
@@ -104,7 +108,7 @@ void TerrainConfig::LoadData(std::string filename) {
         _gridInfos[i].resize(_iGridCol);
         for (int j=0; j<_iGridCol; j++) {
             fin.read((char*)&gridType, sizeof(unsigned char));
-            _gridInfos[i][j].gridType = (TerrainGrid::Type)gridType;
+            _gridInfos[i][j].gridType = (TerrainGrid::TYPE)gridType;
 
             fin.read((char*)&x, sizeof(int));
             fin.read((char*)&y, sizeof(int));
@@ -184,14 +188,6 @@ void TerrainConfig::DumpData() {
     }
 }
 
-int TerrainConfig::Pos2GridRow(const Vector3D &pos) {
-    return int(pos.z / _dLineLength);
-}
-
-int TerrainConfig::Pos2GridCol(const Vector3D &pos) {
-    return int(pos.x / _dLineLength);
-}
-
 void TerrainConfig::WrapAround(Vector3D &pos) {
     // map size
     double map_width = _dLineLength * _iGridCol;
@@ -206,13 +202,13 @@ void TerrainConfig::WrapAround(Vector3D &pos) {
     pos.z -= ztimes * map_height;
 }
 
-TerrainGrid::Type TerrainConfig::GetPointType(const Vector3D &pos) {
+TerrainGrid::TYPE TerrainConfig::GetPointType(const Vector3D &pos) {
     int col = int(pos.x / _dLineLength);
     int row = int(pos.z / _dLineLength);
     return GetGridType(col, row);
 }
 
-TerrainGrid::Type TerrainConfig::GetGridType(int col, int row) {
+TerrainGrid::TYPE TerrainConfig::GetGridType(int col, int row) {
     if (col < 0 || col >= _iGridCol || row < 0 || row >= _iGridRow) // use [at] for out_of_range exception
         Log::Error("grid pos(%d,%d) out of bound(%d,%d)", col, row, _iGridCol, _iGridRow);
     return _gridInfos[row][col].gridType;

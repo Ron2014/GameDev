@@ -19,6 +19,9 @@ SystemWorldRender::SystemWorldRender():m_iWorldID(0),System() {
     printf("SystemWorldRender::SystemWorldRender\n");
 	initscr();
     curs_set(FALSE);
+
+    TerrainGrid::type_chtype[TerrainGrid::Walkable_Wall] = ACS_CKBOARD;
+    TerrainGrid::type_chtype[TerrainGrid::Walkable_Grass] = ACS_PLUS;
 }
 
 SystemWorldRender::~SystemWorldRender() {
@@ -45,8 +48,18 @@ void SystemWorldRender::DrawTerrain(TerrainConfig * terrainCfg) {
     WINDOW *cur_win = scene_win;
     for (int i=0; i<sheight; i++) {
         for (int j=0; j<swidth; j++) {
-            TerrainGrid::Type gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
-            chtype ch = grid_chtype[gt];
+            TerrainGrid::TYPE gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
+            // switch(gt) {
+            //     case TerrainGrid::Walkable:
+            //         break;
+            //     case TerrainGrid::Walkable_Wall:
+            //         mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_CKBOARD);
+            //         break;
+            //     case TerrainGrid::Walkable_Grass:
+            //         mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ACS_PLUS);
+            //         break;
+            // }
+            chtype ch = TerrainGrid::GetChtype(gt);
             if (ch) mvwaddch(cur_win, i+CURSES_BOADER, j+CURSES_BOADER, ch);
         }
     }
@@ -75,12 +88,12 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
 
         if (e) {
             // get ComponentLocation
-            Component *c = e->GetComponent(Component::location);
+            ComponentLocation *cl = e->GetComponent<ComponentLocation>();
 
-            if (c) {
+            if (cl) {
                 // get position & heading
-                Vector3D &position = ((ComponentLocation *)c)->vPosition;
-                Vector3D &heading = ((ComponentLocation *)c)->vHeading;
+                Vector3D &position = cl->vPosition;
+                Vector3D &heading = cl->vHeading;
 
                 int xpixel = int(position.x * linePixel / lineLength);
                 int ypixel = sheight - int(position.z * linePixel / lineLength) - 1;
@@ -96,10 +109,10 @@ void SystemWorldRender::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
                 else
                     mvwaddch(cur_win, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_BTEE);
 
-                c = e->GetComponent(Component::health_point);
-                if (c) {
-                    int maxHP = ((ComponentHealthPoint *)c)->iMaxHP;
-                    int curHP = ((ComponentHealthPoint *)c)->iCurHP;
+                ComponentHealthPoint *ch = e->GetComponent<ComponentHealthPoint>();
+                if (ch) {
+                    int maxHP = ch->iMaxHP;
+                    int curHP = ch->iCurHP;
 
                     // render
                 }
