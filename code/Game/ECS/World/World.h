@@ -12,6 +12,7 @@ public:
         none,
         maintown,
         battle,       // copy scenes
+        terrain_editor,
         TypeCount,
     };
 

@@ -7,6 +7,7 @@ const std::string World::world_names[World::TypeCount] = {
     "none",
     "maintown",
     "battle",
+    "terrain_editor",
 };
 
 World::World() {
@@ -31,10 +32,13 @@ void World::Leave(Entity *e) {
 }
 
 void World::LoadTerrain(std::string filename) {
-    TerrainConfig *terrainCfg = new TerrainConfig();
-    terrainCfg->LoadData(filename);
-    m_sTerrainName = terrainCfg->GetName();
-    gTerrainConfigMgr.AddMember(m_sTerrainName, terrainCfg);
+    TerrainConfig *terrainCfg = gTerrainConfigMgr.GetMember(filename);
+    if (!terrainCfg) {
+        terrainCfg = new TerrainConfig();
+        terrainCfg->LoadData(filename + ".txt");
+        gTerrainConfigMgr.AddMember(filename, terrainCfg);
+    }
+    m_sTerrainName = filename;
 }
 
 TerrainConfig *World::GetTerrainConfig() {

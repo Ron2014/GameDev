@@ -1,26 +1,8 @@
 fips_begin_module(ECS)
+    fips_vs_warning_level(3)
+    fips_vs_disable_warnings(4005 4996)
+    
     fips_include_directories(.)
-
-    if (FIPS_WINDOWS)
-        fips_include_directories(../../Ext/PDCurses)
-    else()
-        # # if you want to use lib directly in linux
-        # # enter ncurses-6.2 do these command
-        # # $./configure && sudo make
-        # # and then use the library like this
-
-        # fips_include_directories(../../Ext/ncurses-6.2/include)
-        # link_directories(../../Ext/ncurses-6.2/lib)
-        # fips_libs(
-        #     libncurses_g.a
-        #     libncurses.a
-        #     libncurses++_g.a
-        #     libncurses++.a
-        # )
-
-        fips_include_directories(../../Ext/ncurses-6.2/include)
-        fips_include_directories(../../Ext/ncurses-6.2/ncurses)
-    endif()
     
     fips_dir(.)
     fips_files(

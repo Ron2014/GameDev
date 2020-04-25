@@ -7,6 +7,8 @@
 class TerrainConfig
 {
 public:
+    static char* MAP_FILE_PATH;
+    
     TerrainConfig();
     ~TerrainConfig();
 
@@ -19,6 +21,10 @@ public:
 
     TerrainGrid::TYPE GetPointType(const Vector3D &pos);
     TerrainGrid::TYPE GetGridType(int col, int row);
+    const Vector3D &GetGridCenterPos(int col, int row);
+
+    void SetPointType(const Vector3D &, TerrainGrid::TYPE);
+    void SetGridType(int, int, TerrainGrid::TYPE);
 
     std::string GetName();
     int GetGridRow();
@@ -28,7 +34,6 @@ public:
 
 private:
     const int VERSION = 10;
-    static char* MAP_FILE_PATH;
 
     std::string _sName;
     std::string _sStage;

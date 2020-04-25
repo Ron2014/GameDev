@@ -1,12 +1,12 @@
 #pragma once
-#include "ECS/Component/Component.h"
+#include "Component/Component.h"
 #include "Terrain/TerrainGrid.h"
 
 struct ComponentPainter: Component
 {
 public:
-    ComponentPainter():Component() {
-        SetType(Component::painter);
-    }
+    static const TYPE type = Component::painter;
     TerrainGrid::TYPE pen;
+
+    ComponentPainter();
 };

@@ -7,6 +7,7 @@
 #include "Component/ComponentMoving.h"
 #include "Component/ComponentPathfinding.h"
 #include "Component/ComponentHealthPoint.h"
+#include "Component/ComponentPainter.h"
 
 using namespace Future;
 

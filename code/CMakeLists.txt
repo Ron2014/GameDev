@@ -44,8 +44,31 @@ endif()
 
 fips_include_directories(.)
 fips_include_directories(Engine)
-fips_include_directories(Game)
 fips_include_directories(Ext)
+
+if (FIPS_WINDOWS)
+    fips_include_directories(Ext/PDCurses)
+else()
+    # # if you want to use lib directly in linux
+    # # enter ncurses-6.2 do these command
+    # # $./configure && sudo make
+    # # and then use the library like this
+
+    # fips_include_directories(Ext/ncurses-6.2/include)
+    # link_directories(Ext/ncurses-6.2/lib)
+    # fips_libs(
+    #     libncurses_g.a
+    #     libncurses.a
+    #     libncurses++_g.a
+    #     libncurses++.a
+    # )
+    fips_include_directories(Ext/ncurses-6.2/include)
+    fips_include_directories(Ext/ncurses-6.2/ncurses)
+endif()
+
+fips_include_directories(Game)
+fips_include_directories(Game/ECS)
+fips_include_directories(Game/UICurses)
 
 fips_ide_group(Ext)
 fips_add_subdirectory(Ext)

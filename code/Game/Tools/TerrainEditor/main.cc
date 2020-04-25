@@ -1,11 +1,8 @@
-#include "ECS/Global.h"
-#include "ECS/World/WorldMaintown.h"
-#include "ECS/Component/ComponentLocation.h"
-#include "ECS/Component/ComponentMoving.h"
-
-#include "ComponentPainter.h"
-#include "EntityPainter.h"
-#include "SystemPainter.h"
+#include "Global.h"
+#include "World/WorldTerrainEditor.h"
+#include "System/SystemMoving.h"
+#include "UIMgr.h"
+#include "UIWndTerrainList.h"
 
 #if FUTURE_WINDOWS
 #include <windows.h>
@@ -20,41 +17,17 @@
 */
 
 int main(char *argv[]) {
-    WorldMaintown world0;
-    world0.LoadTerrain("helloworld2.txt");
-
-    EntityPainter entity0;
-
-    ComponentLocation *c = entity0.AddComponent<ComponentLocation>();
-    c->iWorldID = world0.GetID();
-    c->vPosition.Zero();
-    c->vHeading.Zero();
-
-    ComponentMoving *c1 = entity0.AddComponent<ComponentMoving>();
-    c1->vVelocity.Zero();
-    c1->iMass = 100;
-    c1->iMaxSpeed = 1;
-    c1->iMaxForce = 1;
-    c1->iMaxTurnRate = 0;
-
-    ComponentPainter *c2 = entity0.AddComponent<ComponentPainter>();
-    c2->pen = TerrainGrid::Walkable;
-
-    world0.Enter(&entity0);
-
 #if FUTURE_WINDOWS
     srand((unsigned int)time((time_t *)0));
 #else
     srand(time(NULL));
 #endif
 
-    SystemWorldRender::Instance()->SetWorldID(world0.GetID());
-    SystemPainter::Instance()->SetPlayerID(entity0.GetID());
+    UIMgr::Instance()->CreateWnd<UIWndTerrainList>();
 
     while(true) {
-        SystemWorldRender::Instance()->Update();
-        SystemPainter::Instance()->Update();
         SystemMoving::Instance()->Update();
+        UIMgr::Instance()->Update();
 
 #if FUTURE_WINDOWS
         Sleep(62);
@@ -66,9 +39,6 @@ int main(char *argv[]) {
             break;
         }
     }
-
-    gWorldMgr.RemoveMember(world0.GetID());
-    gEntityMgr.RemoveMember(entity0.GetID());
 
     return 0;
 }

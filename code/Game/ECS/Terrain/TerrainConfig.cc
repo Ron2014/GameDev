@@ -123,7 +123,7 @@ void TerrainConfig::LoadData(std::string filename) {
 }
 
 void TerrainConfig::SaveData() {
-    std::string filename = Path::Combine(MAP_FILE_PATH, _sName.c_str());
+    std::string filename = Path::Combine(MAP_FILE_PATH, (_sName + ".txt").c_str());
     std::ofstream fout(filename, std::ios::binary);
     fout.write((char*)&VERSION, sizeof(unsigned char));
 
@@ -212,4 +212,22 @@ TerrainGrid::TYPE TerrainConfig::GetGridType(int col, int row) {
     if (col < 0 || col >= _iGridCol || row < 0 || row >= _iGridRow) // use [at] for out_of_range exception
         Log::Error("grid pos(%d,%d) out of bound(%d,%d)", col, row, _iGridCol, _iGridRow);
     return _gridInfos[row][col].gridType;
+}
+
+const Vector3D &TerrainConfig::GetGridCenterPos(int col, int row) {
+    if (col < 0 || col >= _iGridCol || row < 0 || row >= _iGridRow) // use [at] for out_of_range exception
+        Log::Error("grid pos(%d,%d) out of bound(%d,%d)", col, row, _iGridCol, _iGridRow);
+    return _gridInfos[row][col].centerPos;
+}
+
+void TerrainConfig::SetPointType(const Vector3D &pos, TerrainGrid::TYPE gridType) {
+    int col = int(pos.x / _dLineLength);
+    int row = int(pos.z / _dLineLength);
+    return SetGridType(col, row, gridType);
+}
+
+void TerrainConfig::SetGridType(int col, int row, TerrainGrid::TYPE gridType) {
+    if (col < 0 || col >= _iGridCol || row < 0 || row >= _iGridRow) // use [at] for out_of_range exception
+        Log::Error("grid pos(%d,%d) out of bound(%d,%d)", col, row, _iGridCol, _iGridRow);
+    _gridInfos[row][col].gridType = gridType;
 }
