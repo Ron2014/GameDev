@@ -12,7 +12,9 @@ UIWnd::UIWnd(/* args */):
     m_Anchor(UIWnd::ANCHOR::LEFT_TOP),
     m_offsetX(0),
     m_offsetY(0),
-    m_destroy(0)
+    m_destroy(0),
+    m_isDirty(true),
+    m_keyWnd(false)
 {
 }
 
@@ -84,24 +86,13 @@ void UIWnd::Init() {
 }
 
 void UIWnd::Update() {
-    if (m_destroy < 0) return;
-
-    if (m_destroy) {
-        Clean();
-        OnDestroy();
-        UIMgr::Instance()->DestroyWnd(this);
-        m_destroy = -1;
-        
-    } else {
-        if (!NeedUpdate()) return;
-        OnUpdate();
-        if (!m_destroy) box(m_pWnd, 0, 0);
-        wrefresh(m_pWnd);
-    }
+    if (m_destroy || !NeedUpdate()) return;
+    OnUpdate();
+    if (!m_destroy) box(m_pWnd, 0, 0);
+    wrefresh(m_pWnd);
 }
 
 void UIWnd::Destroy() {
-    if (m_destroy < 0) return;
     m_destroy++;
     wclear(m_pWnd);
 }

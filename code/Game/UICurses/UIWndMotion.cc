@@ -54,7 +54,7 @@ void UIWndMotion::OnUpdate() {
             case 'd':
                 v = Vector3D(c->iMaxSpeed, 0.0, 0.0);
                 break;
-            case KEY_F(1):
+            case KEY_ESC:
                 gExitGame = true;
                 break;
             default:

@@ -26,7 +26,7 @@ fips_end_module()
 
 fips_begin_unittest(MainLoop)
     fips_vs_warning_level(3)
-    fips_vs_disable_warnings(4819 4996)  # 为了中文注释 cp936
+    fips_vs_disable_warnings(4005 4819 4996)  # 为了中文注释 cp936
     
     fips_dir(UnitTests)
     if(FIPS_WINDOWS)

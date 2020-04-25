@@ -1,7 +1,13 @@
 #pragma once
 
 #include <curses.h>
+#if FUTURE_POSIX
 #include <menu.h>
+#endif
+
+#define CURSES_BOADER 1
+#define CURSES_TIMEOUT 30
+#define KEY_ESC 0x1b
 
 class UIWnd
 {
@@ -21,6 +27,10 @@ public:
         LEFT_CENTER, MIDDLE_CENTER, RIGHT_CENTER,
         LEFT_BOTTOM, MIDDLE_BOTTOM, RIGHT_BOTTOM,
     };
+
+    enum COLOR {
+        MENU = 1,
+    };
     
 protected:
     /* data */
@@ -36,16 +46,22 @@ protected:
      * -1: Already Destroied (only once)
     */
     int m_destroy;  
+    bool m_isDirty;
+    bool m_keyWnd;
 
     ANCHOR m_Anchor;
     int m_offsetX;
     int m_offsetY;
 
-    virtual bool NeedUpdate() { return true; }
+    virtual bool NeedUpdate() {
+        if (m_keyWnd) return true;
+        if (!m_isDirty) return false;
+        m_isDirty = false;
+        return true;
+    }
     virtual void OnInit() {}        // draw content once
     virtual void OnResize() {}      // draw content everytime
     virtual void OnUpdate() {}      // logic before refresh
-    virtual void OnDestroy() {}     // logic after clean
 
     UIWnd(/* args */);
 
@@ -66,4 +82,6 @@ public:
     void Init();
     void Update();
     void Destroy();
+    virtual void OnDestroy() {}     // logic after clean
+    bool NeedDestroy() { return m_destroy > 0;}
 };

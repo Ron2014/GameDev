@@ -21,7 +21,7 @@ void WorldTerrainEditor::Enter(Entity *entity) {
     ComponentMoving *c1 = entity->AddComponent<ComponentMoving>();
     c1->vVelocity.Zero();
     c1->iMass = 100;
-    c1->iMaxSpeed = terrain->GetLineLength();
+    c1->iMaxSpeed = (int)terrain->GetLineLength();
     c1->iMaxForce = 1;
     c1->iMaxTurnRate = 0;
 

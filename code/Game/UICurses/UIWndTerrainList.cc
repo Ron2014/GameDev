@@ -11,15 +11,18 @@
 #include "UIWndTerrainPainter.h"
 #include "UIWndTerrainScene.h"
 
+#if FUTURE_POSIX
+
 UIWndTerrainList::UIWndTerrainList(/* args */):UIWnd(),
     m_filenames(nullptr),
+    m_iCount(0),
     m_pMenu(nullptr),
-    m_items(nullptr),
-    m_count(0)
+    m_items(nullptr)
 {
     m_Anchor = UIWnd::ANCHOR::MIDDLE_CENTER;
     m_width = COLS - CURSES_BOADER * 2;
     m_height = LINES - CURSES_BOADER * 2; 
+    m_keyWnd = true;
 }
 
 UIWndTerrainList::~UIWndTerrainList()
@@ -27,6 +30,8 @@ UIWndTerrainList::~UIWndTerrainList()
 }
 
 void UIWndTerrainList::OnResize() {
+    SetTitle("Choose a terrain file to edit or create a new one");
+
 	char* srcDir = TerrainConfig::MAP_FILE_PATH;
     int baselen = (int)strlen(srcDir);
 
@@ -35,22 +40,22 @@ void UIWndTerrainList::OnResize() {
         Log::Error("ERROR: check dir path %s", srcDir);
 
     int len, i = 0;
-    m_count = fileList.size() + 1;
-    m_items = (ITEM **)malloc((m_count + 1) * sizeof(ITEM *)); // the last item must be nullptr
+    m_iCount = fileList.size() + 1;
+    m_items = (ITEM **)malloc((m_iCount + 1) * sizeof(ITEM *)); // the last item must be nullptr
     
-    m_filenames = (char **)malloc(m_count * sizeof(char *));
+    m_filenames = (char **)malloc(m_iCount * sizeof(char *));
     for (auto &f: fileList) {
         std::string filename = Path::GetBaseFilename(f);
         len = (int)(filename.length());
         m_filenames[i] = (char *)malloc((len + 1) * sizeof(char));
         strncpy(m_filenames[i], filename.c_str(), len);
         m_filenames[i][len] = '\0';
-        m_items[i] = new_item(m_filenames[i], m_filenames[i]);
+        m_items[i] = new_item(m_filenames[i], "");
         i++;
     }
     m_filenames[i] = nullptr;
-    m_items[i] = new_item("New", "Create A New Terrain");
-    m_items[m_count] = nullptr;
+    m_items[i] = new_item("New File", "");
+    m_items[m_iCount] = nullptr;
     
 	m_pMenu = new_menu(m_items);
 
@@ -61,8 +66,6 @@ void UIWndTerrainList::OnResize() {
     set_menu_sub(m_pMenu, derwin(m_pWnd, m_height - 3, m_width, 3, 1)); // 3 lines for title
 	set_menu_format(m_pMenu, m_height, 1);
     set_menu_mark(m_pMenu, "*");
-
-    SetTitle("Choose a terrain file to edit or create a new one");
         
 	/* Post the menu */
 	post_menu(m_pMenu);
@@ -89,7 +92,7 @@ void UIWndTerrainList::OnUpdate() {
         {
             // loading or create terrain
             ITEM *cur_item = current_item(m_pMenu);
-            if (item_index(cur_item) == m_count - 1) {
+            if (item_index(cur_item) == m_iCount - 1) {
                 // create a new one
                 wmove(m_pWnd, m_height - 2, 1);
                 // wclrtoeol(m_pWnd);
@@ -131,7 +134,7 @@ void UIWndTerrainList::OnUpdate() {
 void UIWndTerrainList::Clean() {
     unpost_menu(m_pMenu);
     free_menu(m_pMenu);
-    for(int i = 0; i < m_count; ++i) {
+    for(int i = 0; i < m_iCount; ++i) {
         if (m_filenames[i]) free(m_filenames[i]);
         free_item(m_items[i]);
     }
@@ -143,5 +146,138 @@ void UIWndTerrainList::Clean() {
     m_filenames = nullptr;
     m_pMenu = nullptr;
     m_items = nullptr;
-    m_count = 0;
+    m_iCount = 0;
 }
+
+#else
+
+
+UIWndTerrainList::UIWndTerrainList(/* args */):UIWnd(),
+    m_filenames(nullptr),
+    m_iCount(0),
+    m_iChoice(0),
+    m_iMenuLen(8)
+{
+    m_Anchor = UIWnd::ANCHOR::MIDDLE_CENTER;
+    m_width = COLS - CURSES_BOADER * 2;
+    m_height = LINES - CURSES_BOADER * 2; 
+    m_keyWnd = true;
+}
+
+UIWndTerrainList::~UIWndTerrainList()
+{
+}
+
+void UIWndTerrainList::OnResize() {
+    SetTitle("Choose a terrain file to edit or create a new one");
+
+	char* srcDir = TerrainConfig::MAP_FILE_PATH;
+    int baselen = (int)strlen(srcDir);
+
+    std::vector<std::string> fileList, dirList;
+    if (!Path::DeepSearchDirectory(srcDir, fileList, dirList))
+        Log::Error("ERROR: check dir path %s", srcDir);
+
+    int len, i = 0, j = 0;
+    m_iCount = int(fileList.size()) + 1;
+    m_filenames = (char **)malloc((m_iCount + 1) * sizeof(char *));
+
+    for (auto &f: fileList) {
+        std::string filename = Path::GetBaseFilename(f);
+        len = (int)(filename.length());
+        if (len > m_iMenuLen) m_iMenuLen = len;
+        m_filenames[i] = (char *)malloc((len + 1) * sizeof(char));
+        strncpy(m_filenames[i], filename.c_str(), len);
+        m_filenames[i][len] = '\0';
+        i++;
+    }
+    m_filenames[m_iCount-1] = (char *)malloc((len + 1) * sizeof(char));
+    strncpy(m_filenames[m_iCount-1], "New File", m_iMenuLen+1);
+    m_filenames[m_iCount] = nullptr;
+
+    keypad(m_pWnd, TRUE);
+    wtimeout(m_pWnd, CURSES_TIMEOUT);
+}
+
+void UIWndTerrainList::OnUpdate() {
+    int i = 0, j;
+    char **filename = m_filenames;
+    while (*filename) {
+        if (m_iChoice == i) wattron(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
+        j = (i / LINES) * (m_iMenuLen + 4);
+        mvwprintw(m_pWnd, 3+i, 1+j, "%s", *filename);
+        if (m_iChoice == i) wattroff(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
+        i++;
+        filename++;
+    }
+
+    int ch;
+    if ((ch = wgetch(m_pWnd)) != ERR) {
+        switch (ch) {
+            case KEY_ESC:
+                gExitGame = true;
+                break;
+            case KEY_UP:
+            {
+                m_iChoice = (m_iChoice + m_iCount - 1) % m_iCount;
+                m_isDirty = true;
+            }   
+                break;
+            case KEY_DOWN:
+            {
+                m_iChoice = (m_iChoice + m_iCount + 1) % m_iCount;
+                m_isDirty = true;
+            }   
+                break;
+            case '\n':
+            {
+                // loading or create terrain
+                if (m_iChoice == m_iCount - 1) {
+                    mvwprintw(m_pWnd, m_height - 2, 1, "You have chosen %d item with name %s", m_iChoice,  m_filenames[m_iChoice]);
+
+                } else {
+                    char *filename = m_filenames[m_iChoice];
+                    World *world = gWorldMgr.GetMember(gWatchingWorldID);
+                    if (!world) {
+                        world = new WorldTerrainEditor();
+                        gWatchingWorldID = world->GetID();
+                    }
+                    world->LoadTerrain(filename);
+
+                    Entity *entity = gEntityMgr.GetMember(gContollingEntityID);
+                    if (!entity) {
+                        entity = new EntityPainter();
+                        gContollingEntityID = entity->GetID();
+                    }
+                    world->Enter(entity);
+
+                    // show pos & grid type
+                    UIMgr::Instance()->CreateWnd<UIWndTerrainPainter>();
+                    // show terrain preference
+                    // UIMgr::Instance()->CreateWnd<UIWndTerrainPainter>();
+                    // show scene
+                    UIMgr::Instance()->CreateWnd<UIWndTerrainScene>();
+
+                    Destroy();
+                }
+            }
+                break;
+        }
+    }
+}
+
+void UIWndTerrainList::Clean() {
+    for(int i=0; i<m_iCount; i++) {
+        if (m_filenames[i]) free(m_filenames[i]);
+    }
+    free(m_filenames);
+
+    wclear(m_pWnd);
+    delwin(m_pWnd);
+
+    m_filenames = nullptr;
+    m_iCount = 0;
+    m_iMenuLen = 8;
+}
+
+#endif

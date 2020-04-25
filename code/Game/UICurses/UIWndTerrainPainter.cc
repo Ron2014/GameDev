@@ -6,6 +6,7 @@ const UIWnd::TYPE UIWndTerrainPainter::type = UIWnd::TYPE::terrain_painter;
 
 UIWndTerrainPainter::UIWndTerrainPainter(/* args */):UIWndMotion()
 {
+    m_keyWnd = true;
 }
 
 UIWndTerrainPainter::~UIWndTerrainPainter()
@@ -24,7 +25,7 @@ void UIWndTerrainPainter::OnResize() {
     mvwprintw(m_pWnd, 4, 1, "Erase:<DEL> %d", KEY_DC);
     
     mvwprintw(m_pWnd, 5, 1, "Save:F10");
-    mvwprintw(m_pWnd, 6, 1, "Exit:F1");
+    mvwprintw(m_pWnd, 6, 1, "ESC:F1");
     
 	keypad(m_pWnd, TRUE);
     wtimeout(m_pWnd, CURSES_TIMEOUT);
@@ -93,7 +94,7 @@ void UIWndTerrainPainter::OnUpdate() {
             case KEY_F(10):
                 terrainCfg->SaveData();
                 break;
-            case KEY_F(1):
+            case KEY_ESC:
             {
                 // go back
                 UIMgr::Instance()->CreateWnd<UIWndTerrainList>();

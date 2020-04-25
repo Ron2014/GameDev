@@ -5,8 +5,7 @@
 #include <map>
 using namespace Future;
 
-#define CURSES_BOADER 1
-#define CURSES_TIMEOUT 30
+#define COLOR_MENU 1
 
 
 class UIMgr
@@ -53,7 +52,12 @@ public:
         if (pWnd) pWnd->Update();
     }
 
-    void DestroyWnd(UIWnd *);
+    template <class T>
+    void DestroyWnd() {
+        T *pWnd = GetWnd<T>();
+        if (pWnd) pWnd->Destroy();
+    }
+    
     void Update();
 
     SINGLETON(UIMgr)

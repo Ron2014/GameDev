@@ -6,9 +6,15 @@ class UIWndTerrainList: public UIWnd
 {
 protected:
     char **m_filenames;
+    int m_iCount;
+
+#if FUTURE_POSIX
     ITEM **m_items;
     MENU *m_pMenu;
-    int m_count;
+#else
+    int m_iChoice;
+    int m_iMenuLen;
+#endif
 
     virtual void OnResize();
     virtual void OnUpdate();
