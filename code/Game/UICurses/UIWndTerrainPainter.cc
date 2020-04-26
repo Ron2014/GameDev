@@ -42,6 +42,7 @@ void UIWndTerrainPainter::OnDestroy() {
 
     Entity *entity = gEntityMgr.GetMember(gContollingEntityID);
     if (entity) world->Leave(entity);
+    gRefreshWorld = true;
 }
 
 void UIWndTerrainPainter::OnResize() {
@@ -79,9 +80,6 @@ void UIWndTerrainPainter::OnResize() {
     mvwprintw(m_pWnd, m_iLine++, 1, "Save:<F10>");
     mvwprintw(m_pWnd, m_iLine++, 1, "Exit:<ESC>");
     mvwprintw(m_pWnd, m_iLine++, 1, "Current Grid: ");
-    
-	keypad(m_pWnd, TRUE);
-    wtimeout(m_pWnd, CURSES_TIMEOUT);
 
     gRefreshControl = true;
 }
@@ -110,15 +108,19 @@ void UIWndTerrainPainter::OnUpdate() {
     Vector3D v;
     switch (ch) {
         case 'w':
+        case KEY_UP:
             v = Vector3D(0.0, 0.0, c->iMaxSpeed);
             break;
         case 'a':
+        case KEY_LEFT:
             v = Vector3D(-c->iMaxSpeed, 0.0, 0.0);
             break;
         case 's':
+        case KEY_DOWN:
             v = Vector3D(0.0, 0.0, -c->iMaxSpeed);
             break;
         case 'd':
+        case KEY_RIGHT:
             v = Vector3D(c->iMaxSpeed, 0.0, 0.0);
             break;
         case '\t':
@@ -129,12 +131,6 @@ void UIWndTerrainPainter::OnUpdate() {
                 val_brush = TerrainGrid::TYPE::Walkable;
             p->pen = (TerrainGrid::TYPE)val_brush;
             mvwaddch(m_pWnd, m_iLine-1, 14, TerrainGrid::GetChtype(p->pen));
-        }
-            break;
-        case ERR:
-        {
-            terrainCfg->SetPointType(pos, p->pen);
-            gRefreshWorld = true;
         }
             break;
         case KEY_F(10):
@@ -169,5 +165,7 @@ void UIWndTerrainPainter::OnUpdate() {
     if (gRefreshControl) {
         gRefreshControl = false;
         mvwprintw(m_pWnd, m_iLine, 1, "POS:%.02f, %.02f", pos.x, pos.z);
+        terrainCfg->SetPointType(pos, p->pen);
+        gRefreshWorld = true;
     }
 }

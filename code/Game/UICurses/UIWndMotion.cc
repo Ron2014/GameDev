@@ -5,7 +5,7 @@ const UIWnd::TYPE UIWndMotion::type = UIWnd::TYPE::control;
 UIWndMotion::UIWndMotion(/* args */):UIWnd()
 {
     m_Anchor = UIWnd::ANCHOR::LEFT_TOP;
-    m_width = 30;
+    m_width = 25;
     m_height = 10;
     m_keyWnd = true;
 }
@@ -21,9 +21,6 @@ void UIWndMotion::OnResize() {
     mvwaddch(m_pWnd, 1, 16, ACS_DARROW);
     mvwaddch(m_pWnd, 1, 20, ACS_RARROW);
     mvwprintw(m_pWnd, 2, 1, "Exit:F1");
-    
-	keypad(m_pWnd, TRUE);
-    wtimeout(m_pWnd, CURSES_TIMEOUT);
 
     gRefreshControl = true;
 }

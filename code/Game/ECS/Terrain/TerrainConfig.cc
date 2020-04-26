@@ -8,11 +8,12 @@
 using namespace Future;
 
 #if FUTURE_WINDOWS
-char * TerrainConfig::MAP_FILE_PATH = "E:/GitHub/GameDev/resource/maps";
+char * TerrainConfig::FILE_PATH = "E:/GitHub/GameDev/resource/maps";
 #else
-char * TerrainConfig::MAP_FILE_PATH = "/mnt/e/GitHub/GameDev/resource/maps";
+char * TerrainConfig::FILE_PATH = "/mnt/e/GitHub/GameDev/resource/maps";
 #endif
 char * TerrainConfig::DEFAULT_NAME = "<untitled-name>";
+char * TerrainConfig::FILE_EXTENSION = ".txt";
 
 TerrainConfig::TerrainConfig():
     _dLineWidth(0.05),
@@ -56,7 +57,7 @@ TerrainConfig &TerrainConfig::operator=(TerrainConfig &other) {
 }
 
 void TerrainConfig::LoadData(std::string filename) {
-    std::string fullpath = Path::Combine(MAP_FILE_PATH, filename.c_str());
+    std::string fullpath = Path::Combine(FILE_PATH, filename.c_str());
     if (!Path::FileExists(fullpath))
         Log::Error("file %s not exist!", fullpath);
 
@@ -131,7 +132,7 @@ void TerrainConfig::LoadData(std::string filename) {
 }
 
 void TerrainConfig::SaveData() {
-    std::string filename = Path::Combine(MAP_FILE_PATH, (_sName + ".txt").c_str());
+    std::string filename = Path::Combine(FILE_PATH, (_sName + FILE_EXTENSION).c_str());
     std::ofstream fout(filename, std::ios::binary);
     fout.write((char*)&VERSION, sizeof(unsigned char));
 

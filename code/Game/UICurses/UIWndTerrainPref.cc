@@ -13,7 +13,7 @@ UIWndTerrainPref::UIWndTerrainPref(/* args */):
     m_iInputPos(0)
 {
     m_Anchor = UIWnd::ANCHOR::LEFT_TOP;
-    m_width = 30;
+    m_width = 25;
     m_height = LINES - CURSES_BOADER * 2;
     m_sInput[m_iInputPos] = '\0';
     m_keyWnd = true;
@@ -62,9 +62,6 @@ void UIWndTerrainPref::OnResize() {
 
     m_iLine = 7;
     wmove(m_pWnd, 3+m_iChoice, 13);
-
-    keypad(m_pWnd, TRUE);
-    wtimeout(m_pWnd, CURSES_TIMEOUT);
 }
 
 void UIWndTerrainPref::OnUpdate() {        
@@ -80,46 +77,51 @@ void UIWndTerrainPref::OnUpdate() {
     if (m_isDirty) {
         m_isDirty = false;
 
-        char fmt[128];
+        char* fmt = (char *)malloc( (m_width+1) * sizeof(char));
         int line = 3;
-        
-        // 18: Name:        %-16d
+
+        memset(fmt, 0, m_width+1);
         snprintf(fmt, m_width, "Name:        %%-%ds", maxInputLen);
-        fmt[18] = '\0';
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetName().c_str());
+        // mvwprintw(m_pWnd, line++, 1, "Name:        %s", terrainCfg->GetName().c_str());
 
-        snprintf(fmt, m_width, "Stage:       %%-%ds", maxInputLen);
-        fmt[18] = '\0';
+        memset(fmt, 0, m_width+1);
+        snprintf(fmt, m_width, "Stage:       %%-%ds", maxInputLen);        
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetStage().c_str());
+        // mvwprintw(m_pWnd, line++, 1, "Stage:       %s", terrainCfg->GetStage().c_str());
 
-        snprintf(fmt, m_width, "Level:       %%-%ds", maxInputLen);
-        fmt[18] = '\0';
+        memset(fmt, 0, m_width+1);
+        snprintf(fmt, m_width, "Level:       %%-%ds", maxInputLen);        
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetLevel().c_str());
+        // mvwprintw(m_pWnd, line++, 1, "Level:       %s", terrainCfg->GetLevel().c_str());
 
-        snprintf(fmt, m_width, "Grid Row:    %%-%dd", maxInputLen);
-        fmt[18] = '\0';
+        memset(fmt, 0, m_width+1);
+        snprintf(fmt, m_width, "Grid Row:    %%-%dd", maxInputLen);        
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetGridRow());
+        // mvwprintw(m_pWnd, line++, 1, "Grid Row:    %d", terrainCfg->GetGridRow());
 
-        // 18: Grid Column: %-16d
-        snprintf(fmt, m_width, "Grid Column: %%-%dd", maxInputLen);
-        fmt[18] = '\0';
+        memset(fmt, 0, m_width+1);
+        snprintf(fmt, m_width, "Grid Column: %%-%dd", maxInputLen);        
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetGridCol());
+        // mvwprintw(m_pWnd, line++, 1, "Grid Column: %d", terrainCfg->GetGridCol());
+        
 
-        // 21: Line Length: %-160.2f
-        snprintf(fmt, m_width, "Line Length: %%-%d0.2f", maxInputLen);
-        fmt[21] = '\0';
+        memset(fmt, 0, m_width+1);
+        snprintf(fmt, m_width, "Line Length: %%-%d.2f", maxInputLen);        
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetLineLength());
+        // mvwprintw(m_pWnd, line++, 1, "Line Length: %.2f", terrainCfg->GetLineLength());
 
+
+        memset(fmt, 0, m_width+1);
         snprintf(fmt, m_width, "Line Pixel:  %%-%dd", maxInputLen);
-        fmt[18] = '\0';
         mvwprintw(m_pWnd, line++, 1, fmt, terrainCfg->GetLinePixel());
+        // mvwprintw(m_pWnd, line++, 1, "Line Pixel:  %d", terrainCfg->GetLinePixel());
 
-        // 5: %-16s
-        snprintf(fmt, maxInputLen, "%%-%ds", maxInputLen);
-        fmt[5] = '\0';
-        wattron(m_pWnd, A_STANDOUT | A_UNDERLINE);
-        mvwprintw(m_pWnd, 3+m_iChoice, 14, fmt, m_sInput);
-        wattroff(m_pWnd, A_STANDOUT | A_UNDERLINE);
+        wattron(m_pWnd, A_STANDOUT);
+        mvwprintw(m_pWnd, 3+m_iChoice, 14, "%s", m_sInput);
+        wattroff(m_pWnd, A_STANDOUT);
+
+        free(fmt);
     }
 
     int ch = wgetch(m_pWnd);
@@ -176,25 +178,36 @@ void UIWndTerrainPref::OnUpdate() {
                     break;
             }
             gRefreshWorld = true;
+            m_isDirty = true;
         }
             break;
         case KEY_F(10):
         {
+            std::string newname = terrainCfg->GetName();
+            if (newname.length()) terrainCfg->SaveData();
+
             std::string filename = world->GetTerrainFilename();
             gTerrainConfigMgr.RemoveMember(filename);
+            delete(terrainCfg);
 
             if (filename != TerrainConfig::DEFAULT_NAME) filename = Path::GetBaseFilename(filename);
             TerrainConfig *editTerrain = gTerrainConfigMgr.GetMember(filename);
             if (editTerrain) {
-                *editTerrain = *terrainCfg;
-                delete(terrainCfg);
-            } else {
-                gTerrainConfigMgr.AddMember(terrainCfg->GetName(), terrainCfg);
-                editTerrain = terrainCfg;
+                if(filename != newname) {
+                    gTerrainConfigMgr.RemoveMember(filename);
+                    delete(editTerrain);
+
+                    std::string fullpath = Path::Combine(TerrainConfig::FILE_PATH,
+                        (filename + TerrainConfig::FILE_EXTENSION).c_str());
+                    Path::FileRemove(fullpath);
+                }
             }
-            world->LoadTerrain(editTerrain->GetName());
-            
-            UIMgr::Instance()->CreateWnd<UIWndTerrainPainter>();
+            if (newname.length()) {
+                world->LoadTerrain(newname);
+                UIMgr::Instance()->CreateWnd<UIWndTerrainPainter>();
+            } else {
+                UIMgr::Instance()->CreateWnd<UIWndTerrainList>();
+            }
             Destroy();
         }
             break;

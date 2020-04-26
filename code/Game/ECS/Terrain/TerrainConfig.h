@@ -7,8 +7,9 @@
 class TerrainConfig
 {
 public:
-    static char* MAP_FILE_PATH;
+    static char* FILE_PATH;
     static char* DEFAULT_NAME;
+    static char* FILE_EXTENSION;
     
     TerrainConfig();
     ~TerrainConfig();
@@ -41,10 +42,20 @@ public:
     void SetLevel(const char * val) { _sLevel = val; }
 
     void SetGridRow(int row) {
+        if (row == _iGridRow) return;
+
+        int oldRow = _iGridRow;
         _iGridRow = row;
         _gridInfos.resize(_iGridRow);
+        if (row > oldRow) {
+            for (int i=oldRow; i<_iGridRow; i++) {
+                _gridInfos[i].resize(_iGridCol);
+            }
+        }
     }
     void SetGridCol(int col) {
+        if (col == _iGridCol) return;
+        
         _iGridCol = col;
         for (int i=0; i<_iGridRow; i++) {
             _gridInfos[i].resize(_iGridCol);

@@ -10,7 +10,7 @@ TEST(TerrainLoader) {
         std::cout << "input the filename: ";
         std::cin >> filename;
 
-        filename += ".txt";
+        filename += TerrainConfig::FILE_EXTENSION;
 
         TerrainConfig tc = TerrainConfig();
         tc.LoadData(filename);

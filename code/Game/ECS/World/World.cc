@@ -35,9 +35,9 @@ void World::LoadTerrain(const std::string &filename) {
     TerrainConfig *terrainCfg = gTerrainConfigMgr.GetMember(filename);
     if (!terrainCfg) {
         terrainCfg = new TerrainConfig();
-        terrainCfg->LoadData(filename + ".txt");
         gTerrainConfigMgr.AddMember(filename, terrainCfg);
     }
+    terrainCfg->LoadData(filename + TerrainConfig::FILE_EXTENSION);
     m_sTerrainName = filename;
 }
 

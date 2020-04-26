@@ -34,14 +34,14 @@ UIWndTerrainList::~UIWndTerrainList()
 void UIWndTerrainList::OnResize() {
     SetTitle("Choose a terrain file to edit or create a new one");
 
-	char* srcDir = TerrainConfig::MAP_FILE_PATH;
+	char* srcDir = TerrainConfig::FILE_PATH;
     int baselen = (int)strlen(srcDir);
 
     std::vector<std::string> fileList, dirList;
     if (!Path::DeepSearchDirectory(srcDir, fileList, dirList))
         Log::Error("ERROR: check dir path %s", srcDir);
 
-    int len, i = 0, j = 0;
+    int len, i = 0;
     m_iCount = int(fileList.size()) + 1;
     m_filenames = (char **)malloc((m_iCount + 1) * sizeof(char *));
 
@@ -55,13 +55,10 @@ void UIWndTerrainList::OnResize() {
         m_filenames[i][len] = '\0';
     }
 
-    m_filenames[0] = (char *)malloc((len + 1) * sizeof(char));
+    m_filenames[0] = (char *)malloc((m_iMenuLen + 1) * sizeof(char));
     strncpy(m_filenames[0], "<New File>", m_iMenuLen+1);
     
     m_filenames[m_iCount] = nullptr;
-
-    keypad(m_pWnd, TRUE);
-    wtimeout(m_pWnd, CURSES_TIMEOUT);
 }
 
 void UIWndTerrainList::OnUpdate() {
@@ -96,18 +93,21 @@ void UIWndTerrainList::OnUpdate() {
                 gExitGame = true;
                 break;
             case 'w':
+            case KEY_UP:
             {
                 m_iChoice = (m_iChoice + m_iCount - 1) % m_iCount;
                 m_isDirty = true;
             }   
                 break;
             case 's':
+            case KEY_DOWN:
             {
                 m_iChoice = (m_iChoice + 1) % m_iCount;
                 m_isDirty = true;
             }   
                 break;
             case 'a':
+            case KEY_LEFT:
             {   
                 if (m_iCount < file_lines) return;
                 m_iChoice = (m_iChoice + m_iCount - file_lines) % m_iCount;
@@ -115,6 +115,7 @@ void UIWndTerrainList::OnUpdate() {
             }
                 break;
             case 'd':
+            case KEY_RIGHT:
             {
                 if (m_iCount < file_lines) return;
                 m_iChoice = (m_iChoice + file_lines) % m_iCount;

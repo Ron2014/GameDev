@@ -45,14 +45,15 @@ void UIWndTerrainScene::DrawTerrain(TerrainConfig * terrainCfg) {
     int gridCol = terrainCfg->GetGridCol();
 
     // screen pixel
-    m_width = linePixel * gridCol;
-    m_height = linePixel * gridRow;
+    m_width = gridCol;
+    m_height = gridRow;
     
     Resize();
 
+    // draw only grid
     for (int i=0; i<m_height; i++) {
         for (int j=0; j<m_width; j++) {
-            TerrainGrid::TYPE gt = terrainCfg->GetGridType(j/linePixel, gridRow-(i/linePixel)-1);
+            TerrainGrid::TYPE gt = terrainCfg->GetGridType(j, gridRow-i-1);
             chtype ch = TerrainGrid::GetChtype(gt);
             if (ch) mvwaddch(m_pWnd, i+CURSES_BOADER, j+CURSES_BOADER, ch);
         }
@@ -78,9 +79,9 @@ void UIWndTerrainScene::DrawEntity(TerrainConfig *terrainCfg, std::set<int> &ent
             if (cl) {
                 // get position & heading
                 Vector3D &position = cl->vPosition;
-                int xpixel = int(position.x * linePixel / lineLength);
-                int ypixel = m_height - int(position.z * linePixel / lineLength) - 1;
-                mvwaddch(m_pWnd, ypixel+CURSES_BOADER, xpixel+CURSES_BOADER, ACS_DIAMOND);
+                int xgrid = int(position.x / lineLength);
+                int ygrid = m_height - int(position.z  / lineLength) - 1;
+                mvwaddch(m_pWnd, ygrid+CURSES_BOADER, xgrid+CURSES_BOADER, ACS_DIAMOND);
             }
         } else {
             Log::Error("Render Error: entity %d not exist!", *it);

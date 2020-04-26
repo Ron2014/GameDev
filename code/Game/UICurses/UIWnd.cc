@@ -23,6 +23,7 @@ UIWnd::~UIWnd()
 }
 
 void UIWnd::Clean() {
+    if(m_keyWnd) keypad(m_pWnd, FALSE);
     wclear(m_pWnd);
     delwin(m_pWnd);
 }
@@ -76,6 +77,11 @@ void UIWnd::Resize() {
     startx += m_offsetX;
     m_pWnd = newwin(height, width, starty, startx);
     box(m_pWnd, 0 , 0);
+
+    if (m_keyWnd) {
+        keypad(m_pWnd, TRUE);
+        wtimeout(m_pWnd, CURSES_TIMEOUT);
+    }
 
     OnResize();
 }
