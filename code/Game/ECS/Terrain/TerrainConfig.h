@@ -8,6 +8,7 @@ class TerrainConfig
 {
 public:
     static char* MAP_FILE_PATH;
+    static char* DEFAULT_NAME;
     
     TerrainConfig();
     ~TerrainConfig();
@@ -26,11 +27,33 @@ public:
     void SetPointType(const Vector3D &, TerrainGrid::TYPE);
     void SetGridType(int, int, TerrainGrid::TYPE);
 
-    std::string GetName();
-    int GetGridRow();
-    int GetGridCol();
-    int GetLinePixel();
-    double GetLineLength();
+    std::string GetName() { return _sName; }
+    std::string GetStage() { return _sStage; }
+    std::string GetLevel() { return _sLevel; }
+
+    int GetGridRow() { return _iGridRow; }
+    int GetGridCol() { return _iGridCol; }
+    int GetLinePixel() { return _iLinePix; }
+    double GetLineLength() { return _dLineLength; }
+
+    void SetName(const char * val) { _sName = val; }
+    void SetStage(const char * val) { _sStage = val; }
+    void SetLevel(const char * val) { _sLevel = val; }
+
+    void SetGridRow(int row) {
+        _iGridRow = row;
+        _gridInfos.resize(_iGridRow);
+    }
+    void SetGridCol(int col) {
+        _iGridCol = col;
+        for (int i=0; i<_iGridRow; i++) {
+            _gridInfos[i].resize(_iGridCol);
+        }
+    }
+    void SetLinePixel(int linePixel) { _iLinePix = linePixel; }
+    void SetLineLength(double lineLength) { _dLineLength = lineLength; }
+
+    TerrainConfig &operator=(TerrainConfig &);
 
 private:
     const int VERSION = 10;

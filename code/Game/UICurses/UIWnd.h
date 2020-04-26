@@ -1,9 +1,9 @@
 #pragma once
 
 #include <curses.h>
-#if FUTURE_POSIX
-#include <menu.h>
-#endif
+// #if FUTURE_POSIX
+// #include <menu.h>
+// #endif
 
 #define CURSES_BOADER 1
 #define CURSES_TIMEOUT 30
@@ -65,7 +65,7 @@ protected:
 
     UIWnd(/* args */);
 
-    void SetTitle(char *msg);
+    void SetTitle(char *msg, int row = 1);
     void printw_in_middle(int starty, char *msg);
 
 public:

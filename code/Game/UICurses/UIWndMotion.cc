@@ -7,6 +7,7 @@ UIWndMotion::UIWndMotion(/* args */):UIWnd()
     m_Anchor = UIWnd::ANCHOR::LEFT_TOP;
     m_width = 30;
     m_height = 10;
+    m_keyWnd = true;
 }
 
 UIWndMotion::~UIWndMotion()

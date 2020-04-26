@@ -97,11 +97,16 @@ void UIWnd::Destroy() {
     wclear(m_pWnd);
 }
 
-void UIWnd::SetTitle(char *msg) {
-	mvwaddch(m_pWnd, 2, 0, ACS_LTEE);
-	mvwhline(m_pWnd, 2, 1, ACS_HLINE, m_width);
-	mvwaddch(m_pWnd, 2, m_width + CURSES_BOADER * 2 -1, ACS_RTEE);
-    printw_in_middle(1, msg);
+void UIWnd::SetTitle(char *msg, int row) {
+	mvwaddch(m_pWnd, row-1, 0, ACS_LTEE);
+	mvwhline(m_pWnd, row-1, 1, ACS_HLINE, m_width);
+	mvwaddch(m_pWnd, row-1, m_width + CURSES_BOADER * 2 - 1, ACS_RTEE);
+
+    printw_in_middle(row, msg);
+    
+	mvwaddch(m_pWnd, row+1, 0, ACS_LTEE);
+	mvwhline(m_pWnd, row+1, 1, ACS_HLINE, m_width);
+	mvwaddch(m_pWnd, row+1, m_width + CURSES_BOADER * 2 - 1, ACS_RTEE);
 }
 
 void UIWnd::printw_in_middle(int starty, char *msg){

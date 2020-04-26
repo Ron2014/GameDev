@@ -42,9 +42,11 @@ public:
     static const World::TYPE type = World::none;
     virtual ~World();
 
-    void LoadTerrain(std::string filename);
+    void LoadTerrain(const std::string &filename);
     TerrainConfig *GetTerrainConfig();
+    TerrainConfig *LoadTempTerrain(const std::string &filename = TerrainConfig::DEFAULT_NAME);
 
+    std::string &GetTerrainFilename() { return m_sTerrainName; }
     std::set<int>& GetEntityIDs() { return m_sEntityIDs; }
     int GetID() { return m_ID; }
 

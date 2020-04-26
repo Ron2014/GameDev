@@ -1,3 +1,4 @@
+#include "Global.h"
 #include "UIWndTerrainScene.h"
 
 const UIWnd::TYPE UIWndTerrainScene::type = UIWnd::TYPE::terrain_scene;

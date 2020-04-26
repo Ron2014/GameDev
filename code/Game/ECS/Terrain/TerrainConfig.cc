@@ -12,10 +12,13 @@ char * TerrainConfig::MAP_FILE_PATH = "E:/GitHub/GameDev/resource/maps";
 #else
 char * TerrainConfig::MAP_FILE_PATH = "/mnt/e/GitHub/GameDev/resource/maps";
 #endif
+char * TerrainConfig::DEFAULT_NAME = "<untitled-name>";
 
 TerrainConfig::TerrainConfig():
     _dLineWidth(0.05),
     _dLineLength(1.0),
+    _iGridCol(0),
+    _iGridRow(0),
     _iLinePix(1){
 }
 
@@ -23,28 +26,33 @@ TerrainConfig::~TerrainConfig() {
     _gridInfos.clear();
 }
 
-std::string TerrainConfig::GetName() {
-    return _sName;
-}
-
-int TerrainConfig::GetGridRow() {
-    return _iGridRow;
-}
-
-int TerrainConfig::GetGridCol() {
-    return _iGridCol;
-}
-
-int TerrainConfig::GetLinePixel() {
-    return _iLinePix;
-}
-
-double TerrainConfig::GetLineLength() {
-    return _dLineLength;
-}
-
 void TerrainConfig::LoadData(int id) {
     // get filename from id
+}
+
+TerrainConfig &TerrainConfig::operator=(TerrainConfig &other) {
+    if (this == &other) return *this;
+    
+    this->_sName = other._sName;
+    this->_sStage = other._sStage;
+    this->_sLevel = other._sLevel;
+    this->_iGridRow = other._iGridRow;
+    this->_iGridCol = other._iGridCol;
+    this->_iLinePix = other._iLinePix;
+    this->_dLineLength = other._dLineLength;
+    this->_dLineWidth = other._dLineWidth;
+    this->_vCenter = other._vCenter;
+
+    _gridInfos.resize(_iGridRow);
+    for (int i=0; i<_iGridRow; i++) {
+        _gridInfos[i].resize(_iGridCol);
+        for (int j=0; j<_iGridCol; j++) {
+            _gridInfos[i][j].centerPos = other._gridInfos[i][j].centerPos;
+            _gridInfos[i][j].gridType = other._gridInfos[i][j].gridType;
+        }
+    }
+
+    return *this;
 }
 
 void TerrainConfig::LoadData(std::string filename) {

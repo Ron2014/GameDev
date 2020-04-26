@@ -1,6 +1,5 @@
 #include <set>
 #include "UIWnd.h"
-#include "Global.h"
 #include "Terrain/TerrainConfig.h"
 
 class UIWndTerrainScene: public UIWnd

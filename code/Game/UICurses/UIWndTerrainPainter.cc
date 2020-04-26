@@ -1,12 +1,16 @@
 #include "UIWndTerrainPainter.h"
 #include "UIMgr.h"
+#include "UIWndTerrainPref.h"
 #include "UIWndTerrainList.h"
 #include "UIWndTerrainScene.h"
+#include "World/WorldTerrainEditor.h"
+#include "Entity/EntityPainter.h"
 
 const UIWnd::TYPE UIWndTerrainPainter::type = UIWnd::TYPE::terrain_painter;
 
 UIWndTerrainPainter::UIWndTerrainPainter(/* args */):UIWndMotion()
 {
+    m_height = LINES - CURSES_BOADER * 2;
     m_keyWnd = true;
 }
 
@@ -14,19 +18,67 @@ UIWndTerrainPainter::~UIWndTerrainPainter()
 {
 }
 
-void UIWndTerrainPainter::OnResize() {
-    mvwprintw(m_pWnd, 1, 1, "Move:w-  a-  s-  d- ");
-    mvwaddch(m_pWnd, 1, 8, ACS_UARROW);
-    mvwaddch(m_pWnd, 1, 12, ACS_LARROW);
-    mvwaddch(m_pWnd, 1, 16, ACS_DARROW);
-    mvwaddch(m_pWnd, 1, 20, ACS_RARROW);
+void UIWndTerrainPainter::OnInit() {
+    World *world = gWorldMgr.GetMember(gWatchingWorldID);
+    if (!world){
+        Log::Error("UIWndTerrainPainter::OnInit Error: world %d not exist!", gWatchingWorldID);
+        return;
+    }
 
-    mvwprintw(m_pWnd, 2, 1, "Switch:<TAB> %d", '\t');
-    mvwprintw(m_pWnd, 3, 1, "Paint:<SPACE> %d", ' ');
-    mvwprintw(m_pWnd, 4, 1, "Erase:<DEL> %d", KEY_DC);
+    Entity *entity = gEntityMgr.GetMember(gContollingEntityID);
+    if (!entity) {
+        entity = new EntityPainter();
+        gContollingEntityID = entity->GetID();
+    }
+    world->Enter(entity);
+}
+
+void UIWndTerrainPainter::OnDestroy() {
+    World *world = gWorldMgr.GetMember(gWatchingWorldID);
+    if (!world){
+        Log::Error("UIWndTerrainPainter::OnDestroy Error: world %d not exist!", gWatchingWorldID);
+        return;
+    }
+
+    Entity *entity = gEntityMgr.GetMember(gContollingEntityID);
+    if (entity) world->Leave(entity);
+}
+
+void UIWndTerrainPainter::OnResize() {
+    // which world need render
+    World *world = gWorldMgr.GetMember(gWatchingWorldID);
+    if (!world){
+        Log::Error("OnResize Error: world %d not exist!", gWatchingWorldID);
+        return;
+    }
+
+    TerrainConfig *terrainCfg = world->GetTerrainConfig();
+
+    SetTitle("Terrain Info");
     
-    mvwprintw(m_pWnd, 5, 1, "Save:F10");
-    mvwprintw(m_pWnd, 6, 1, "ESC:F1");
+    m_iLine = 3;
+    mvwprintw(m_pWnd, m_iLine++, 1, "Name: %s", terrainCfg->GetName().c_str());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Stage: %s", terrainCfg->GetStage().c_str());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Level: %s", terrainCfg->GetLevel().c_str());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Grid Row: %d", terrainCfg->GetGridRow());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Grid Column: %d", terrainCfg->GetGridCol());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Line Length: %0.2f", terrainCfg->GetLineLength());
+    mvwprintw(m_pWnd, m_iLine++, 1, "Line Pixel: %d", terrainCfg->GetLinePixel());
+
+    SetTitle("Control Info", ++m_iLine);
+
+    m_iLine += 2;
+    mvwprintw(m_pWnd, m_iLine++, 1, "Move:w-  a-  s-  d- ");
+    mvwaddch(m_pWnd, m_iLine-1, 8, ACS_UARROW);
+    mvwaddch(m_pWnd, m_iLine-1, 12, ACS_LARROW);
+    mvwaddch(m_pWnd, m_iLine-1, 16, ACS_DARROW);
+    mvwaddch(m_pWnd, m_iLine-1, 20, ACS_RARROW);
+
+    mvwprintw(m_pWnd, m_iLine++, 1, "Switch:<TAB>");
+    mvwprintw(m_pWnd, m_iLine++, 1, "Edit:<F1>");
+    mvwprintw(m_pWnd, m_iLine++, 1, "Save:<F10>");
+    mvwprintw(m_pWnd, m_iLine++, 1, "Exit:<ESC>");
+    mvwprintw(m_pWnd, m_iLine++, 1, "Current Grid: ");
     
 	keypad(m_pWnd, TRUE);
     wtimeout(m_pWnd, CURSES_TIMEOUT);
@@ -37,86 +89,85 @@ void UIWndTerrainPainter::OnResize() {
 void UIWndTerrainPainter::OnUpdate() {
     Entity *e = gEntityMgr.GetMember(gContollingEntityID);
     if (!e) {
-        Log::Error("Render Error: entity %d not exist!", gContollingEntityID);
+        Log::Error("OnUpdate Error: entity %d not exist!", gContollingEntityID);
         return;
     }
 
     // which world need render
     World *world = gWorldMgr.GetMember(gWatchingWorldID);
     if (!world){
-        Log::Error("Render Error: world %d not exist!", gWatchingWorldID);
+        Log::Error("OnUpdate Error: world %d not exist!", gWatchingWorldID);
         return;
     }
 
-    // printf("UIWndTerrainPainter::OnUpdate\n");
     TerrainConfig *terrainCfg = world->GetTerrainConfig();
     ComponentMoving *c = e->GetComponent<ComponentMoving>();
     ComponentLocation *l = e->GetComponent<ComponentLocation>();
     ComponentPainter *p = e->GetComponent<ComponentPainter>();
     Vector3D pos = l->vPosition;
 
-    int ch;
+    int ch = wgetch(m_pWnd);
     Vector3D v;
-    if ((ch = wgetch(m_pWnd)) != ERR) {
-        switch (ch) {
-            case 'w':
-                v = Vector3D(0.0, 0.0, c->iMaxSpeed);
-                break;
-            case 'a':
-                v = Vector3D(-c->iMaxSpeed, 0.0, 0.0);
-                break;
-            case 's':
-                v = Vector3D(0.0, 0.0, -c->iMaxSpeed);
-                break;
-            case 'd':
-                v = Vector3D(c->iMaxSpeed, 0.0, 0.0);
-                break;
-            case '\t':
-            {
-                unsigned int val_brush = (unsigned int)p->pen;
-                val_brush++;
-                if (val_brush == TerrainGrid::TYPE::TypeCount)
-                    val_brush = TerrainGrid::TYPE::Walkable;
-                p->pen = (TerrainGrid::TYPE)val_brush;
-            }
-                break;
-            case ' ':
-            {
-                terrainCfg->SetPointType(pos, p->pen);
-                gRefreshWorld = true;
-            }
-                break;
-            case KEY_DC:
-            {
-                terrainCfg->SetPointType(pos, TerrainGrid::TYPE::Walkable);
-                gRefreshWorld = true;
-            }
-                break;
-            case KEY_F(10):
-                terrainCfg->SaveData();
-                break;
-            case KEY_ESC:
-            {
-                // go back
-                UIMgr::Instance()->DestroyWnd<UIWndTerrainScene>();
-                UIMgr::Instance()->CreateWnd<UIWndTerrainList>();
-                Destroy();
-                break;
-            }
-            default:
-                break;
+    switch (ch) {
+        case 'w':
+            v = Vector3D(0.0, 0.0, c->iMaxSpeed);
+            break;
+        case 'a':
+            v = Vector3D(-c->iMaxSpeed, 0.0, 0.0);
+            break;
+        case 's':
+            v = Vector3D(0.0, 0.0, -c->iMaxSpeed);
+            break;
+        case 'd':
+            v = Vector3D(c->iMaxSpeed, 0.0, 0.0);
+            break;
+        case '\t':
+        {
+            unsigned int val_brush = (unsigned int)p->pen;
+            val_brush++;
+            if (val_brush == TerrainGrid::TYPE::TypeCount)
+                val_brush = TerrainGrid::TYPE::Walkable;
+            p->pen = (TerrainGrid::TYPE)val_brush;
+            mvwaddch(m_pWnd, m_iLine-1, 14, TerrainGrid::GetChtype(p->pen));
         }
-        gRefreshControl = true;
+            break;
+        case ERR:
+        {
+            terrainCfg->SetPointType(pos, p->pen);
+            gRefreshWorld = true;
+        }
+            break;
+        case KEY_F(10):
+        {
+            terrainCfg->SaveData();
+            mvwprintw(m_pWnd, m_height, 1, "%s saved", terrainCfg->GetName().c_str());
+        }
+            break;
+        case KEY_F(1):
+        {
+            TerrainConfig *tmpTerrain = world->LoadTempTerrain(terrainCfg->GetName() + ".edit");
+            *tmpTerrain = *terrainCfg;
+            UIMgr::Instance()->CreateWnd<UIWndTerrainPref>();
+            Destroy();
+        }
+            break;
+        case KEY_ESC:
+        {
+            // go back
+            UIMgr::Instance()->CreateWnd<UIWndTerrainList>();
+            UIMgr::Instance()->DestroyWnd<UIWndTerrainScene>();
+            Destroy();
+        }
+            break;
+        default:
+            break;
     }
+
     c->vVelocity = v;
     if (!v.isZero()) l->vHeading = v;
 
     if (gRefreshControl) {
         gRefreshControl = false;
-        mvwprintw(m_pWnd, 7, 1, "Current Grid: ");
-        mvwaddch(m_pWnd, 7, 14, TerrainGrid::GetChtype(p->pen));
-
-        mvwprintw(m_pWnd, 8, 1, "POS:%.02f, %.02f", pos.x, pos.z);
-        mvwprintw(m_pWnd, 9, 1, "Pressed:%c(%d)", ch, ch);
+        mvwprintw(m_pWnd, m_iLine, 1, "POS:%.02f, %.02f", pos.x, pos.z);
     }
 }

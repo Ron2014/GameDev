@@ -10,11 +10,3 @@ public:
     EntityPainter(/* args */);
     ~EntityPainter();
 };
-
-EntityPainter::EntityPainter(/* args */)
-{
-}
-
-EntityPainter::~EntityPainter()
-{
-}

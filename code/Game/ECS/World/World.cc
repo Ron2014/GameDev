@@ -31,7 +31,7 @@ void World::Leave(Entity *e) {
     m_sEntityIDs.erase(e->GetID());
 }
 
-void World::LoadTerrain(std::string filename) {
+void World::LoadTerrain(const std::string &filename) {
     TerrainConfig *terrainCfg = gTerrainConfigMgr.GetMember(filename);
     if (!terrainCfg) {
         terrainCfg = new TerrainConfig();
@@ -39,6 +39,16 @@ void World::LoadTerrain(std::string filename) {
         gTerrainConfigMgr.AddMember(filename, terrainCfg);
     }
     m_sTerrainName = filename;
+}
+
+TerrainConfig *World::LoadTempTerrain(const std::string &filename) {
+    TerrainConfig *terrainCfg = gTerrainConfigMgr.GetMember(filename);
+    if (!terrainCfg) {
+        terrainCfg = new TerrainConfig();
+        gTerrainConfigMgr.AddMember(filename, terrainCfg);
+    }
+    m_sTerrainName = filename;
+    return terrainCfg;
 }
 
 TerrainConfig *World::GetTerrainConfig() {
