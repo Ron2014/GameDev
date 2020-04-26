@@ -1,6 +1,7 @@
 #include "UIWndTerrainPainter.h"
 #include "UIMgr.h"
 #include "UIWndTerrainList.h"
+#include "UIWndTerrainScene.h"
 
 const UIWnd::TYPE UIWndTerrainPainter::type = UIWnd::TYPE::terrain_painter;
 
@@ -97,6 +98,7 @@ void UIWndTerrainPainter::OnUpdate() {
             case KEY_ESC:
             {
                 // go back
+                UIMgr::Instance()->DestroyWnd<UIWndTerrainScene>();
                 UIMgr::Instance()->CreateWnd<UIWndTerrainList>();
                 Destroy();
                 break;

@@ -21,7 +21,7 @@ UIWndTerrainList::UIWndTerrainList(/* args */):UIWnd(),
 {
     m_Anchor = UIWnd::ANCHOR::MIDDLE_CENTER;
     m_width = COLS - CURSES_BOADER * 2;
-    m_height = LINES - CURSES_BOADER * 2; 
+    m_height = LINES - CURSES_BOADER * 2;
     m_keyWnd = true;
 }
 
@@ -42,19 +42,19 @@ void UIWndTerrainList::OnResize() {
     int len, i = 0;
     m_iCount = fileList.size() + 1;
     m_items = (ITEM **)malloc((m_iCount + 1) * sizeof(ITEM *)); // the last item must be nullptr
-    
     m_filenames = (char **)malloc(m_iCount * sizeof(char *));
+    
+    m_items[0] = new_item("New File", "");
     for (auto &f: fileList) {
+        i++;
         std::string filename = Path::GetBaseFilename(f);
         len = (int)(filename.length());
         m_filenames[i] = (char *)malloc((len + 1) * sizeof(char));
         strncpy(m_filenames[i], filename.c_str(), len);
         m_filenames[i][len] = '\0';
         m_items[i] = new_item(m_filenames[i], "");
-        i++;
     }
-    m_filenames[i] = nullptr;
-    m_items[i] = new_item("New File", "");
+    m_filenames[m_iCount-1] = nullptr;
     m_items[m_iCount] = nullptr;
     
 	m_pMenu = new_menu(m_items);
@@ -156,7 +156,7 @@ UIWndTerrainList::UIWndTerrainList(/* args */):UIWnd(),
     m_filenames(nullptr),
     m_iCount(0),
     m_iChoice(0),
-    m_iMenuLen(8)
+    m_iMenuLen(10)
 {
     m_Anchor = UIWnd::ANCHOR::MIDDLE_CENTER;
     m_width = COLS - CURSES_BOADER * 2;
@@ -183,16 +183,18 @@ void UIWndTerrainList::OnResize() {
     m_filenames = (char **)malloc((m_iCount + 1) * sizeof(char *));
 
     for (auto &f: fileList) {
+        i++;
         std::string filename = Path::GetBaseFilename(f);
         len = (int)(filename.length());
         if (len > m_iMenuLen) m_iMenuLen = len;
         m_filenames[i] = (char *)malloc((len + 1) * sizeof(char));
         strncpy(m_filenames[i], filename.c_str(), len);
         m_filenames[i][len] = '\0';
-        i++;
     }
-    m_filenames[m_iCount-1] = (char *)malloc((len + 1) * sizeof(char));
-    strncpy(m_filenames[m_iCount-1], "New File", m_iMenuLen+1);
+
+    m_filenames[0] = (char *)malloc((len + 1) * sizeof(char));
+    strncpy(m_filenames[0], "<New File>", m_iMenuLen+1);
+    
     m_filenames[m_iCount] = nullptr;
 
     keypad(m_pWnd, TRUE);
@@ -200,15 +202,26 @@ void UIWndTerrainList::OnResize() {
 }
 
 void UIWndTerrainList::OnUpdate() {
-    int i = 0, j;
-    char **filename = m_filenames;
-    while (*filename) {
-        if (m_iChoice == i) wattron(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
-        j = (i / LINES) * (m_iMenuLen + 4);
-        mvwprintw(m_pWnd, 3+i, 1+j, "%s", *filename);
-        if (m_iChoice == i) wattroff(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
-        i++;
-        filename++;
+    if (m_isDirty) {
+        m_isDirty = false;
+        
+        char fmt[128];
+        int i = 0, j;
+        char **filename = m_filenames;
+        while (*filename) {
+            j = (i / LINES) * (m_iMenuLen + 4);
+            if (m_iChoice == i) {
+                snprintf(fmt, 128, "* %%-%ds", m_iMenuLen + 2);
+                wattron(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
+                mvwprintw(m_pWnd, 3+i, 1+j, fmt, *filename);
+                wattroff(m_pWnd, COLOR_PAIR(int(UIWnd::COLOR::MENU)));
+            } else {
+                snprintf(fmt, 128, "  %%-%ds", m_iMenuLen + 2);
+                mvwprintw(m_pWnd, 3+i, 1+j, fmt, *filename);
+            }
+            i++;
+            filename++;
+        }
     }
 
     int ch;
@@ -277,7 +290,7 @@ void UIWndTerrainList::Clean() {
 
     m_filenames = nullptr;
     m_iCount = 0;
-    m_iMenuLen = 8;
+    m_iMenuLen = 10;
 }
 
 #endif
