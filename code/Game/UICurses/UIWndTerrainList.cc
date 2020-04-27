@@ -136,6 +136,7 @@ void UIWndTerrainList::OnUpdate() {
                     
                     TerrainConfig *tmpTerrain = world->LoadTempTerrain();
                     UIMgr::Instance()->CreateWnd<UIWndTerrainPref>();
+                    UIMgr::Instance()->CreateWnd<UIWndTerrainScene>();
                     Destroy();
 
                 } else {

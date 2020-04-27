@@ -13,7 +13,7 @@ UIWndTerrainPref::UIWndTerrainPref(/* args */):
     m_iInputPos(0)
 {
     m_Anchor = UIWnd::ANCHOR::LEFT_TOP;
-    m_width = 25;
+    m_width = 30;
     m_height = LINES - CURSES_BOADER * 2;
     m_sInput[m_iInputPos] = '\0';
     m_keyWnd = true;
@@ -177,6 +177,8 @@ void UIWndTerrainPref::OnUpdate() {
                     terrainCfg->SetLinePixel(atoi(m_sInput));
                     break;
             }
+            m_iInputPos = 0;
+            m_sInput[m_iInputPos] = '\0';
             gRefreshWorld = true;
             m_isDirty = true;
         }

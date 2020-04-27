@@ -6,8 +6,10 @@ UIWndScene::UIWndScene(/* args */):UIWnd()
 {
     m_Anchor = UIWnd::ANCHOR::MIDDLE_CENTER;
 
-    TerrainGrid::type_chtype[TerrainGrid::Walkable_Wall] = ACS_CKBOARD;
-    TerrainGrid::type_chtype[TerrainGrid::Walkable_Grass] = ACS_PLUS;
+    TerrainGrid::type_chtype[TerrainGrid::None] = ' ';
+    TerrainGrid::type_chtype[TerrainGrid::Wall] = ACS_CKBOARD;
+    TerrainGrid::type_chtype[TerrainGrid::Grass] = ACS_PLUS;
+    TerrainGrid::type_chtype[TerrainGrid::Border] = ACS_BLOCK;
 }
 
 UIWndScene::~UIWndScene()

@@ -1,5 +1,5 @@
 #include "ComponentPainter.h"
 
-ComponentPainter::ComponentPainter():pen(TerrainGrid::Walkable),Component() {
+ComponentPainter::ComponentPainter():pen(TerrainGrid::None),Component() {
 
 }

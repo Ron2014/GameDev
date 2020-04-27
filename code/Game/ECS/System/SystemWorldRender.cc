@@ -20,8 +20,10 @@ SystemWorldRender::SystemWorldRender():m_iWorldID(0),System() {
 	initscr();
     curs_set(FALSE);
 
-    TerrainGrid::type_chtype[TerrainGrid::Walkable_Wall] = ACS_CKBOARD;
-    TerrainGrid::type_chtype[TerrainGrid::Walkable_Grass] = ACS_PLUS;
+    TerrainGrid::type_chtype[TerrainGrid::None] = ' ';
+    TerrainGrid::type_chtype[TerrainGrid::Wall] = ACS_CKBOARD;
+    TerrainGrid::type_chtype[TerrainGrid::Grass] = ACS_PLUS;
+    TerrainGrid::type_chtype[TerrainGrid::Border] = ACS_BLOCK;
 }
 
 SystemWorldRender::~SystemWorldRender() {

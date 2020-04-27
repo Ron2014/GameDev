@@ -5,7 +5,7 @@ const UIWnd::TYPE UIWndMotion::type = UIWnd::TYPE::control;
 UIWndMotion::UIWndMotion(/* args */):UIWnd()
 {
     m_Anchor = UIWnd::ANCHOR::LEFT_TOP;
-    m_width = 25;
+    m_width = 30;
     m_height = 10;
     m_keyWnd = true;
 }

@@ -7,9 +7,10 @@ using namespace Future;
 struct TerrainGrid {
 public:
     enum TYPE {
-        Walkable,
-        Walkable_Wall,
-        Walkable_Grass,
+        None,
+        Wall,
+        Grass,
+        Border,
         TypeCount,
     };
 

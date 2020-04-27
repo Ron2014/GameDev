@@ -9,6 +9,6 @@ TerrainGrid::TerrainGrid(TYPE type, Vector3D v3):
 }
 
 TerrainGrid::TerrainGrid():
-    gridType(Walkable),
+    gridType(None),
     centerPos(Vector3D()) {
 }

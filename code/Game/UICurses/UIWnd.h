@@ -6,7 +6,7 @@
 // #endif
 
 #define CURSES_BOADER 1
-#define CURSES_TIMEOUT 30
+#define CURSES_TIMEOUT 200
 #define KEY_ESC 0x1b
 
 class UIWnd
